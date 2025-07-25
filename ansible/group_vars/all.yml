@@ -1,0 +1,35 @@
+---
+# Global variables for all environments
+
+# Application settings
+app_name: tac-med
+app_user: tacmed
+app_group: tacmed
+app_dir: /opt/tac-med
+pm2_app_name: tac-med
+
+# Node.js settings
+node_version: "20.15.1"
+npm_version: "latest"
+
+# PM2 settings
+pm2_instances: 1
+pm2_exec_mode: "cluster"
+
+# Database settings
+mongodb_version: "7.0"
+
+# Security settings
+jwt_secret: "{{ vault_jwt_secret | default('change-this-in-production') }}"
+
+# Logging
+log_level: info
+
+# Git repository
+git_repo: "https://github.com/yourusername/tac-med.git"
+git_branch: main
+
+# Server IP addresses (define these in your inventory or override them)
+prod_server_ip: "YOUR_PRODUCTION_SERVER_IP"
+staging_server_ip: "YOUR_STAGING_SERVER_IP"
+dev_server_ip: "YOUR_DEVELOPMENT_SERVER_IP"

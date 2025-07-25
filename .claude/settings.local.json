@@ -3,7 +3,8 @@
     "allow": [
       "Bash(rm:*)",
       "Bash(npm install)",
-      "Bash(nx show:*)"
+      "Bash(nx show:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }

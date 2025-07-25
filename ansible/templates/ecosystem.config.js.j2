@@ -1,0 +1,48 @@
+module.exports = {
+  apps: [
+    {
+      name: 'tac-med-server',
+      script: 'apps/server/dist/main.js',
+      cwd: '{{ app_dir }}/app',
+      instances: {{ pm2_instances | default(1) }},
+      exec_mode: '{{ pm2_exec_mode | default("cluster") }}',
+      env: {
+        NODE_ENV: '{{ environment }}',
+        PORT: 3000
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3000
+      },
+      log_file: '{{ app_dir }}/logs/combined.log',
+      out_file: '{{ app_dir }}/logs/out.log',
+      error_file: '{{ app_dir }}/logs/error.log',
+      log_date_format: 'YYYY-MM-DD HH:mm Z',
+      merge_logs: true,
+      max_memory_restart: '1G',
+      node_args: '--max-old-space-size=1024',
+      restart_delay: 4000,
+      watch: false,
+      ignore_watch: ['node_modules', 'logs'],
+      max_restarts: 10,
+      min_uptime: '10s'
+    },
+    {
+      name: 'tac-med-client',
+      script: 'serve',
+      cwd: '{{ app_dir }}/app/apps/client',
+      env: {
+        PM2_SERVE_PATH: './dist',
+        PM2_SERVE_PORT: 4200,
+        PM2_SERVE_SPA: 'true',
+        PM2_SERVE_HOMEPAGE: '/index.html'
+      },
+      instances: 1,
+      exec_mode: 'fork',
+      log_file: '{{ app_dir }}/logs/client-combined.log',
+      out_file: '{{ app_dir }}/logs/client-out.log',
+      error_file: '{{ app_dir }}/logs/client-error.log',
+      watch: false
+    }
+  ]
+};

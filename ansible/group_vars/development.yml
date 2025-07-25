@@ -1,0 +1,30 @@
+---
+# Development environment variables
+
+environment: development
+log_level: debug
+
+# PM2 settings for development
+pm2_instances: 1
+pm2_exec_mode: "fork"
+
+# Domain settings
+domain_name: "dev-tac-med.yourdomain.com"
+
+# Auth0 settings (replace with your development values)
+auth0_domain: "your-dev-auth0-domain"
+auth0_audience: "your-dev-auth0-audience"
+auth0_client_id: "your-dev-auth0-client-id"
+
+# Git branch for development
+git_branch: feature/ansible-deployment
+
+# Security settings (minimal for development)
+firewall_strict: false
+fail2ban_enabled: false
+
+# Debug settings
+debug_enabled: true
+
+# Backup settings
+backup_enabled: false

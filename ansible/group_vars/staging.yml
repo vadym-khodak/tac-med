@@ -1,0 +1,27 @@
+---
+# Staging environment variables
+
+environment: staging
+log_level: debug
+
+# PM2 settings for staging
+pm2_instances: 1
+pm2_exec_mode: "fork"
+
+# Domain settings
+domain_name: "staging-tac-med.yourdomain.com"
+
+# Auth0 settings (replace with your staging values)
+auth0_domain: "your-staging-auth0-domain"
+auth0_audience: "your-staging-auth0-audience"
+auth0_client_id: "your-staging-auth0-client-id"
+
+# Git branch for staging
+git_branch: develop
+
+# Security settings (less strict for staging)
+firewall_strict: false
+fail2ban_enabled: true
+
+# Backup settings
+backup_enabled: false

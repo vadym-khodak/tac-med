@@ -1,0 +1,143 @@
+---
+- name: Deploy Tac-Med Application
+  hosts: tac_med
+  become: yes
+  gather_facts: yes
+  vars:
+    git_repo: "https://github.com/yourusername/tac-med.git"
+    git_branch: "{{ branch | default('main') }}"
+    
+  tasks:
+    - name: Update system packages
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install required system packages
+      apt:
+        name:
+          - curl
+          - git
+          - nginx
+          - ufw
+          - fail2ban
+          - htop
+          - unzip
+          - software-properties-common
+          - apt-transport-https
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Create application user
+      user:
+        name: "{{ app_user }}"
+        group: "{{ app_group }}"
+        system: yes
+        shell: /bin/bash
+        home: "{{ app_dir }}"
+        create_home: yes
+
+    - name: Install MongoDB
+      include_tasks: tasks/mongodb.yml
+
+    - name: Install Node.js
+      include_tasks: tasks/nodejs.yml
+
+    - name: Clone or update application repository
+      git:
+        repo: "{{ git_repo }}"
+        dest: "{{ app_dir }}/app"
+        version: "{{ git_branch }}"
+        force: yes
+      become_user: "{{ app_user }}"
+      notify: restart application
+
+    - name: Install Node.js dependencies
+      npm:
+        path: "{{ app_dir }}/app"
+        state: present
+        production: "{{ environment == 'production' }}"
+      become_user: "{{ app_user }}"
+
+    - name: Build application
+      command: npm run build
+      args:
+        chdir: "{{ app_dir }}/app"
+      become_user: "{{ app_user }}"
+      notify: restart application
+
+    - name: Create application configuration
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: '0640'
+      loop:
+        - { src: 'server.env.j2', dest: '{{ app_dir }}/app/apps/server/.env' }
+        - { src: 'client.env.j2', dest: '{{ app_dir }}/app/apps/client/.env' }
+      notify: restart application
+
+    - name: Install PM2 globally
+      npm:
+        name: pm2
+        global: yes
+        state: present
+
+    - name: Create PM2 ecosystem file
+      template:
+        src: ecosystem.config.js.j2
+        dest: "{{ app_dir }}/ecosystem.config.js"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: '0644'
+      notify: restart application
+
+    - name: Configure Nginx
+      include_tasks: tasks/nginx.yml
+
+    - name: Configure firewall
+      include_tasks: tasks/firewall.yml
+
+    - name: Start and enable services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - mongod
+
+    - name: Start application with PM2
+      command: pm2 start {{ app_dir }}/ecosystem.config.js
+      become_user: "{{ app_user }}"
+      args:
+        chdir: "{{ app_dir }}"
+      ignore_errors: yes
+
+    - name: Save PM2 configuration
+      command: pm2 save
+      become_user: "{{ app_user }}"
+
+    - name: Setup PM2 startup script
+      command: pm2 startup systemd -u {{ app_user }} --hp {{ app_dir }}
+      register: pm2_startup_script
+
+    - name: Execute PM2 startup script
+      shell: "{{ pm2_startup_script.stdout }}"
+      when: pm2_startup_script.stdout is defined
+
+  handlers:
+    - name: restart application
+      command: pm2 reload {{ pm2_app_name }}
+      become_user: "{{ app_user }}"
+      ignore_errors: yes
+
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted

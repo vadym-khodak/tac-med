@@ -1,0 +1,44 @@
+---
+- name: Import MongoDB public key
+  apt_key:
+    url: https://www.mongodb.org/static/pgp/server-7.0.asc
+    state: present
+
+- name: Add MongoDB repository
+  apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/7.0 multiverse"
+    state: present
+
+- name: Update package cache
+  apt:
+    update_cache: yes
+
+- name: Install MongoDB
+  apt:
+    name: mongodb-org
+    state: present
+
+- name: Start and enable MongoDB
+  systemd:
+    name: mongod
+    state: started
+    enabled: yes
+
+- name: Create application database
+  mongodb_db:
+    name: "tac-med-{{ environment }}"
+    state: present
+  delegate_to: localhost
+
+- name: Configure MongoDB for external connections
+  lineinfile:
+    path: /etc/mongod.conf
+    regexp: '^  bindIp:'
+    line: '  bindIp: 127.0.0.1'
+  notify: restart mongod
+  when: environment != 'production'
+
+- name: Restart MongoDB
+  systemd:
+    name: mongod
+    state: restarted

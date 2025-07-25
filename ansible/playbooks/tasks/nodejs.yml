@@ -1,0 +1,39 @@
+---
+- name: Download NodeSource GPG key
+  get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    dest: /tmp/nodesource.gpg.key
+
+- name: Add NodeSource APT key
+  apt_key:
+    file: /tmp/nodesource.gpg.key
+    state: present
+
+- name: Add NodeSource repository
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_20.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+
+- name: Verify Node.js installation
+  command: node --version
+  register: node_version_output
+  changed_when: false
+
+- name: Display Node.js version
+  debug:
+    msg: "Node.js version: {{ node_version_output.stdout }}"
+
+- name: Install global npm packages
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: present
+  loop:
+    - pm2
+    - nx

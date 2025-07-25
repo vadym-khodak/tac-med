@@ -1,0 +1,37 @@
+---
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Create Nginx configuration for tac-med
+  template:
+    src: nginx-tac-med.conf.j2
+    dest: /etc/nginx/sites-available/tac-med
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: Enable tac-med site
+  file:
+    src: /etc/nginx/sites-available/tac-med
+    dest: /etc/nginx/sites-enabled/tac-med
+    state: link
+  notify: restart nginx
+
+- name: Test Nginx configuration
+  command: nginx -t
+  register: nginx_test
+  changed_when: false
+
+- name: Display Nginx test result
+  debug:
+    msg: "{{ nginx_test.stdout }}"
+
+- name: Ensure Nginx is started and enabled
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
