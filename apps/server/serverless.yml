@@ -1,0 +1,95 @@
+service: server
+
+frameworkVersion: '4'
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: ${env:API_DOMAIN_NAME}
+    basePath: ''
+    stage: ${opt:stage, env:STAGE, 'production'}
+    createRoute53Record: true
+    endpointType: 'regional'
+    securityPolicy: tls_1_2
+    apiType: rest
+    hostedZoneId: ${env:HOSTED_ZONE_ID}
+    createBasePathMapping: true
+    apiGateway: rest
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: 'eu-central-1'
+  stage: ${opt:stage, env:STAGE, 'production'}
+  iam:
+    role: ${env:IAM_ROLE}
+  deploymentBucket:
+    name: ${env:DEPLOYMENT_BUCKET_NAME}
+  environment:
+    ORIGIN_URL: ${env:ORIGIN_URL}
+    API_DOMAIN_NAME: ${env:API_DOMAIN_NAME}
+    HOSTED_ZONE_ID: ${env:HOSTED_ZONE_ID}
+    IAM_ROLE: ${env:IAM_ROLE}
+    DEPLOYMENT_BUCKET_NAME: ${env:DEPLOYMENT_BUCKET_NAME}
+    SENTRY_DSN: ${env:SENTRY_DSN}
+    SENTRY_AUTH_TOKEN: ${env:SENTRY_AUTH_TOKEN}
+    MONGO_URI: ${env:MONGO_URI}
+    AUTH0_AUDIENCE: ${env:AUTH0_AUDIENCE}
+    AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
+functions:
+  api:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: any
+          path: /
+          cors:
+            origin: ${env:ORIGIN_URL}
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Origin
+              - Accept
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+      - http:
+          method: any
+          path: /{proxy+}
+          cors:
+            origin: ${env:ORIGIN_URL}
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - Origin
+              - Accept
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+
+package:
+  individually: true
+  patterns:
+    - '!./**'
+    - 'dist/**'
+    - 'node_modules/**'
+    - 'package.json'
+    - '!node_modules/@types/**'
+    - '!node_modules/typescript/**'
+    - '!node_modules/ts-node/**'
+    - '!node_modules/.bin/**'
+    - '!node_modules/**/README.md'
+    - '!node_modules/**/*.ts'
+  excludeDevDependencies: true

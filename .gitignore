@@ -1,11 +1,59 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# Dependencies
+node_modules
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+dist-ssr/
+dist
+tmp
+out-tsc
+
+
+# Environment variables
+.env
+**/.env
+.env.local
+**/.env.local
+.env.*.local
+**/.env.*.local
+*.local
+.env.development
+.env.production
+
+# IDE
+.aider*
+/.idea
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -13,12 +61,54 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# dotenv environment variable files
-.env
-.env.development
-.env.test
-.env.production
+# Tests
+/coverage
+/.nyc_output
 
-# temp directory
-.temp
-.tmp
+# Serverless
+.serverless/
+**/.serverless/
+**/.serverless
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+.temp/
+.tmp/
+test-output
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Sentry
+.sentryclirc
+**/.sentryclirc
+
+# misc
+/.sass-cache
+/connect.lock
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# Nx
+.nx/cache
+.nx/workspace-data
+
+# Vite
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+
+

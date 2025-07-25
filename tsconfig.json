@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/server-e2e"
+    },
+    {
+      "path": "./apps/server"
+    },
+    {
+      "path": "./apps/client"
+    },
+    {
+      "path": "./libs/shared/types"
+    },
+    {
+      "path": "./libs/shared/types"
+    }
+  ]
+}

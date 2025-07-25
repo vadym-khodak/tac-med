@@ -1,0 +1,132 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      client: ${{ steps.filter.outputs.client }}
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'apps/client/**'
+            server:
+              - 'apps/server/**'
+
+  deploy-client:
+    needs: check_changes
+    if: ${{ needs.check_changes.outputs.client == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: eu-central-1
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.VITE_SENTRY_AUTH_TOKEN }}
+      VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
+      VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
+      VITE_AUTH0_AUDIENCE: ${{ secrets.VITE_AUTH0_AUDIENCE }}
+      VITE_AUTH0_CALLBACK_URL: ${{ secrets.VITE_AUTH0_CALLBACK_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build client
+        run: npx nx build client --prod
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync apps/client/dist s3://tac-med-static-assets --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+  deploy-server:
+    needs: check_changes
+    if: ${{ needs.check_changes.outputs.server == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+      ORIGIN_URL: ${{ secrets.ORIGIN_URL }}
+      API_DOMAIN_NAME: ${{ secrets.API_DOMAIN_NAME }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
+      IAM_ROLE: ${{ secrets.IAM_ROLE }}
+      DEPLOYMENT_BUCKET_NAME: ${{ secrets.DEPLOYMENT_BUCKET_NAME }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+      AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build server
+        run: npx nx build server --prod
+
+      - name: Install production dependencies
+        run: cd apps/server/dist && npm ci --omit=dev --ignore-scripts --production
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Deploy with Serverless
+        working-directory: apps/server
+        run: |
+          npm install -g serverless@^4.12.0
+          npm install serverless-domain-manager@latest
+          serverless deploy --stage production --verbose
