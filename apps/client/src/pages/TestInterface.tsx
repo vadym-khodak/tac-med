@@ -123,18 +123,21 @@ export const TestInterface: React.FC = () => {
     }
   }, [fullName, answers, navigate])
 
-  const handleWindowClose = (e: BeforeUnloadEvent) => {
-    if (!showInstructions) {
-      e.preventDefault()
-      e.returnValue =
-        'Тестування не завершено. Результати не будуть збережені. Ви впевнені, що хочете вийти?'
-    }
-  }
+  const handleWindowClose = useCallback(
+    (e: BeforeUnloadEvent) => {
+      if (!showInstructions) {
+        e.preventDefault()
+        e.returnValue =
+          'Тестування не завершено. Результати не будуть збережені. Ви впевнені, що хочете вийти?'
+      }
+    },
+    [showInstructions],
+  )
 
   useEffect(() => {
     window.addEventListener('beforeunload', handleWindowClose)
     return () => window.removeEventListener('beforeunload', handleWindowClose)
-  }, [showInstructions])
+  }, [handleWindowClose])
 
   const currentQuestion = questions[currentQuestionIndex]
   const progress = ((currentQuestionIndex + (answerSaved ? 1 : 0)) / questions.length) * 100
@@ -320,7 +323,7 @@ export const TestInterface: React.FC = () => {
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               {currentQuestion.answers.map((answer, index) => (
                 <Checkbox
-                  key={index}
+                  key={`checkbox-${index}-${answer.slice(0, 20)}`}
                   value={index}
                   style={{
                     width: '100%',
@@ -360,7 +363,7 @@ export const TestInterface: React.FC = () => {
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               {currentQuestion.answers.map((answer, index) => (
                 <Radio
-                  key={index}
+                  key={`radio-${index}-${answer.slice(0, 20)}`}
                   value={index}
                   style={{
                     width: '100%',

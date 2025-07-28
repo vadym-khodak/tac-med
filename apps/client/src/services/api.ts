@@ -55,7 +55,7 @@ export const questionsApi = {
     return response.data
   },
 
-  import: async (questions: any[], token: string): Promise<{ imported: number }> => {
+  import: async (questions: unknown[], token: string): Promise<{ imported: number }> => {
     const response = await api.post(
       '/questions/import',
       { questions },
@@ -93,7 +93,7 @@ export const resultsApi = {
     return response.data
   },
 
-  calculate: async (fullName: string, answers: TestAnswer[]): Promise<any> => {
+  calculate: async (fullName: string, answers: TestAnswer[]): Promise<unknown> => {
     const response = await api.post('/results/calculate', {
       fullName,
       answers,

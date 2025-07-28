@@ -4,7 +4,7 @@ import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { BLOCK_NAMES, KnowledgeLevel, TestResult } from '../types'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 
 const getKnowledgeLevelColor = (level: KnowledgeLevel): string => {
   switch (level) {
@@ -208,8 +208,8 @@ export const TestResults: React.FC = () => {
           {typedResult.incorrect_list && typedResult.incorrect_list.length > 0 && (
             <Card title="Питання з неправильними відповідями" size="small">
               <ul>
-                {typedResult.incorrect_list.map((question, index) => (
-                  <li key={index} style={{ marginBottom: '8px' }}>
+                {typedResult.incorrect_list.map((question) => (
+                  <li key={question} style={{ marginBottom: '8px' }}>
                     <Text>{question}</Text>
                   </li>
                 ))}

@@ -21,7 +21,7 @@ export const AdminLogin: React.FC = () => {
 
       message.success('Успішний вхід')
       navigate('/admin/dashboard')
-    } catch (_error: any) {
+    } catch (_error: unknown) {
       message.error('Невірний пароль')
     } finally {
       setLoading(false)

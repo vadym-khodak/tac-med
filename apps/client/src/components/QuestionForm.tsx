@@ -39,10 +39,19 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     }
   }, [question, form])
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: {
+    block: number
+    question: string
+    answers: string[]
+    correct: (number | string)[]
+    image_path?: string
+    youtube_url?: string
+  }) => {
     // Ensure correct is an array of numbers
     const correctIndices = Array.isArray(values.correct)
-      ? values.correct.map((v: any) => (typeof v === 'number' ? v : Number.parseInt(v)))
+      ? values.correct.map((v: number | string) =>
+          typeof v === 'number' ? v : Number.parseInt(v.toString()),
+        )
       : []
 
     onSubmit({

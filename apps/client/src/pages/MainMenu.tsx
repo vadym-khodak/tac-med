@@ -10,7 +10,7 @@ export const MainMenu: React.FC = () => {
   const navigate = useNavigate()
   const [_fullName, setFullName] = useState('')
 
-  const validateFullName = (_: any, value: string) => {
+  const validateFullName = (_: unknown, value: string) => {
     if (!value) {
       return Promise.reject("Поле обов'язкове для заповнення")
     }

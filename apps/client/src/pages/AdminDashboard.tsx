@@ -521,7 +521,10 @@ export const AdminDashboard: React.FC = () => {
                         <Text strong>Варіанти відповідей:</Text>
                         <ul style={{ marginTop: 8 }}>
                           {record.answers.map((answer, index) => (
-                            <li key={index} style={{ marginBottom: 4 }}>
+                            <li
+                              key={`answer-${index}-${answer.slice(0, 15)}`}
+                              style={{ marginBottom: 4 }}
+                            >
                               <Text
                                 style={{
                                   color: record.correct.includes(index) ? '#52c41a' : 'inherit',
