@@ -29,6 +29,17 @@ A desktop application for tactical medicine knowledge testing based on the MARCH
 5. **Circulation** (Кровообіг)
 6. **Hypothermia/Head Injury** (Гіпотермія/травма голови)
 
+## Screenshots
+<img width="1487" height="1308" alt="image" src="https://github.com/user-attachments/assets/f37b5d8f-37a8-40b9-b9fe-c6bec210e3e8" />
+<img width="746" height="819" alt="image" src="https://github.com/user-attachments/assets/4bdc11e6-6a44-4a69-abbb-45aa0751d769" />
+<img width="1501" height="1017" alt="image" src="https://github.com/user-attachments/assets/a69b8910-d418-46e0-aa01-7973b00081d0" />
+<img width="1493" height="862" alt="image" src="https://github.com/user-attachments/assets/a0793fea-708c-4793-b6ef-872b1cb690c2" />
+<img width="1180" height="1314" alt="image" src="https://github.com/user-attachments/assets/18e0d768-df0f-4ace-9691-62dd10abd6c1" />
+<img width="1498" height="1136" alt="image" src="https://github.com/user-attachments/assets/b2beb68f-0b8b-4d8c-8d3d-5c3eb3b0f34c" />
+<img width="687" height="721" alt="image" src="https://github.com/user-attachments/assets/54aee59a-7b9e-45ed-bc2e-804afc05192c" />
+<img width="1498" height="679" alt="image" src="https://github.com/user-attachments/assets/a91f5ee3-0d7e-4fba-8204-31b3cd3bb64c" />
+<img width="1460" height="1179" alt="image" src="https://github.com/user-attachments/assets/40c9cb82-3977-4fa5-a32a-96f001138de8" />
+
 ## Tech Stack
 
 - **Platform**: Windows 7, 10, 11
