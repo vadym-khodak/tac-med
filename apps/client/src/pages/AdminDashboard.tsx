@@ -15,7 +15,9 @@ import {
   message,
   Tabs,
   Tag,
-  Progress
+  Progress,
+  Popconfirm,
+  Drawer
 } from 'antd';
 import { 
   LogoutOutlined, 
@@ -25,11 +27,15 @@ import {
   QuestionCircleOutlined,
   UserOutlined,
   FileTextOutlined,
-  BarChartOutlined
+  BarChartOutlined,
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { adminApi, questionsApi } from '../services/api';
 import { TestResult, Question, AdminStats, QuestionCount, BLOCK_NAMES, KnowledgeLevel } from '../types';
+import { QuestionForm } from '../components/QuestionForm';
 import * as XLSX from 'xlsx';
 
 const { Title, Text } = Typography;
@@ -44,6 +50,9 @@ export const AdminDashboard: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const [importModal, setImportModal] = useState(false);
+  const [questionFormDrawer, setQuestionFormDrawer] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
   const [changePasswordForm] = Form.useForm();
 
   useEffect(() => {
@@ -136,6 +145,52 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Question management functions
+  const handleCreateQuestion = () => {
+    setEditingQuestion(null);
+    setQuestionFormDrawer(true);
+  };
+
+  const handleEditQuestion = (question: Question) => {
+    setEditingQuestion(question);
+    setQuestionFormDrawer(true);
+  };
+
+  const handleDeleteQuestion = async (id: string) => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) return;
+
+    try {
+      await questionsApi.delete(id, token);
+      message.success('Питання видалено');
+      loadDashboardData(token);
+    } catch (error) {
+      message.error('Помилка видалення питання');
+    }
+  };
+
+  const handleQuestionSubmit = async (values: Omit<Question, '_id'>) => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) return;
+
+    try {
+      setFormLoading(true);
+      if (editingQuestion) {
+        await questionsApi.update(editingQuestion._id, values, token);
+        message.success('Питання оновлено');
+      } else {
+        await questionsApi.create(values, token);
+        message.success('Питання додано');
+      }
+      setQuestionFormDrawer(false);
+      loadDashboardData(token);
+    } catch (error) {
+      message.error(editingQuestion ? 'Помилка оновлення питання' : 'Помилка створення питання');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const resultsColumns = [
     {
       title: 'ПІБ',
@@ -223,6 +278,40 @@ export const AdminDashboard: React.FC = () => {
         </Space>
       ),
       width: 100,
+    },
+    {
+      title: 'Дії',
+      key: 'actions',
+      render: (record: Question) => (
+        <Space>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => handleEditQuestion(record)}
+            size="small"
+          >
+            Редагувати
+          </Button>
+          <Popconfirm
+            title="Видалити питання?"
+            description="Ця дія незворотна. Питання буде видалено назавжди."
+            onConfirm={() => handleDeleteQuestion(record._id)}
+            okText="Так"
+            cancelText="Ні"
+          >
+            <Button
+              type="link"
+              danger
+              icon={<DeleteOutlined />}
+              size="small"
+            >
+              Видалити
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+      width: 150,
+      fixed: 'right' as const,
     },
   ];
 
@@ -372,13 +461,22 @@ export const AdminDashboard: React.FC = () => {
           <Card 
             title="Керування питаннями"
             extra={
-              <Button 
-                type="primary" 
-                icon={<UploadOutlined />}
-                onClick={() => setImportModal(true)}
-              >
-                Імпорт питань
-              </Button>
+              <Space>
+                <Button 
+                  type="default" 
+                  icon={<PlusOutlined />}
+                  onClick={handleCreateQuestion}
+                >
+                  Додати питання
+                </Button>
+                <Button 
+                  type="primary" 
+                  icon={<UploadOutlined />}
+                  onClick={() => setImportModal(true)}
+                >
+                  Імпорт питань
+                </Button>
+              </Space>
             }
           >
             <Table
@@ -499,6 +597,23 @@ export const AdminDashboard: React.FC = () => {
           </Text>
         </Space>
       </Modal>
+
+      {/* Question Form Drawer */}
+      <Drawer
+        title={editingQuestion ? 'Редагувати питання' : 'Додати нове питання'}
+        placement="right"
+        size="large"
+        onClose={() => setQuestionFormDrawer(false)}
+        open={questionFormDrawer}
+        destroyOnClose={true}
+      >
+        <QuestionForm
+          question={editingQuestion || undefined}
+          onSubmit={handleQuestionSubmit}
+          onCancel={() => setQuestionFormDrawer(false)}
+          loading={formLoading}
+        />
+      </Drawer>
     </div>
   );
 };
