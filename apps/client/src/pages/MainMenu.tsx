@@ -1,60 +1,62 @@
-import React, { useState } from 'react';
-import { Button, Input, Form, Typography, Space, Card, message } from 'antd';
-import { UserOutlined, SettingOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Button, Input, Form, Typography, Space, Card, message } from 'antd'
+import { UserOutlined, SettingOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
-const { Title, Text } = Typography;
+const { Title, Text } = Typography
 
 export const MainMenu: React.FC = () => {
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-  const [fullName, setFullName] = useState('');
+  const [form] = Form.useForm()
+  const navigate = useNavigate()
+  const [fullName, setFullName] = useState('')
 
   const validateFullName = (_: any, value: string) => {
     if (!value) {
-      return Promise.reject('Поле обов\'язкове для заповнення');
+      return Promise.reject("Поле обов'язкове для заповнення")
     }
 
-    const cyrillicPattern = /^[А-ЯІЇЄЁа-яіїєё]+$/;
-    const words = value.trim().split(/\s+/);
+    const cyrillicPattern = /^[А-ЯІЇЄЁа-яіїєё]+$/
+    const words = value.trim().split(/\s+/)
 
     if (words.length !== 3) {
-      return Promise.reject('Введіть своє Прізвище Ім\'я По-батькові через пробіл');
+      return Promise.reject("Введіть своє Прізвище Ім'я По-батькові через пробіл")
     }
 
     for (const word of words) {
       if (word.length < 3) {
-        return Promise.reject('Введіть своє Прізвище Ім\'я По-батькові через пробіл');
+        return Promise.reject("Введіть своє Прізвище Ім'я По-батькові через пробіл")
       }
       if (!cyrillicPattern.test(word)) {
-        return Promise.reject('Введіть своє Прізвище Ім\'я По-батькові через пробіл');
+        return Promise.reject("Введіть своє Прізвище Ім'я По-батькові через пробіл")
       }
       if (word[0] !== word[0].toUpperCase()) {
-        return Promise.reject('Введіть своє Прізвище Ім\'я По-батькові через пробіл');
+        return Promise.reject("Введіть своє Прізвище Ім'я По-батькові через пробіл")
       }
     }
 
-    return Promise.resolve();
-  };
+    return Promise.resolve()
+  }
 
   const handleUserSubmit = (values: { fullName: string }) => {
-    setFullName(values.fullName);
-    navigate('/test', { state: { fullName: values.fullName } });
-  };
+    setFullName(values.fullName)
+    navigate('/test', { state: { fullName: values.fullName } })
+  }
 
   const handleAdminClick = () => {
-    navigate('/admin');
-  };
+    navigate('/admin')
+  }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '20px'
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px',
+      }}
+    >
       <Card
         style={{
           width: '100%',
@@ -82,11 +84,7 @@ export const MainMenu: React.FC = () => {
             }
             style={{ width: '100%' }}
           >
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={handleUserSubmit}
-            >
+            <Form form={form} layout="vertical" onFinish={handleUserSubmit}>
               <Form.Item
                 label="Прізвище Ім'я По-батькові"
                 name="fullName"
@@ -109,7 +107,7 @@ export const MainMenu: React.FC = () => {
                     borderRadius: '8px',
                     height: '48px',
                     fontSize: '16px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                 >
                   Розпочати тестування
@@ -139,7 +137,7 @@ export const MainMenu: React.FC = () => {
                 borderRadius: '8px',
                 height: '48px',
                 fontSize: '16px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
               }}
             >
               Увійти як адміністратор
@@ -148,5 +146,5 @@ export const MainMenu: React.FC = () => {
         </Space>
       </Card>
     </div>
-  );
-};
+  )
+}

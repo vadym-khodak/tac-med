@@ -1,32 +1,32 @@
-import React, { useEffect } from 'react';
-import { Form, Input, Select, Button, Space, Checkbox, Card, Typography } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Question, BLOCK_NAMES } from '../types';
+import React, { useEffect } from 'react'
+import { Form, Input, Select, Button, Space, Checkbox, Card, Typography } from 'antd'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Question, BLOCK_NAMES } from '../types'
 
-const { TextArea } = Input;
-const { Title, Text } = Typography;
+const { TextArea } = Input
+const { Title, Text } = Typography
 
 interface QuestionFormProps {
-  question?: Question;
-  onSubmit: (values: Omit<Question, '_id'>) => void;
-  onCancel: () => void;
-  loading?: boolean;
+  question?: Question
+  onSubmit: (values: Omit<Question, '_id'>) => void
+  onCancel: () => void
+  loading?: boolean
 }
 
 export const QuestionForm: React.FC<QuestionFormProps> = ({
   question,
   onSubmit,
   onCancel,
-  loading = false
+  loading = false,
 }) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm()
 
   useEffect(() => {
     if (question) {
       form.setFieldsValue({
         ...question,
-        correct: question.correct || []
-      });
+        correct: question.correct || [],
+      })
     } else {
       // Set default values for new question
       form.setFieldsValue({
@@ -34,23 +34,23 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
         answers: ['', '', '', ''],
         correct: [],
         image_path: '',
-        youtube_url: ''
-      });
+        youtube_url: '',
+      })
     }
-  }, [question, form]);
+  }, [question, form])
 
   const handleSubmit = (values: any) => {
     // Ensure correct is an array of numbers
-    const correctIndices = Array.isArray(values.correct) 
-      ? values.correct.map((v: any) => typeof v === 'number' ? v : parseInt(v))
-      : [];
+    const correctIndices = Array.isArray(values.correct)
+      ? values.correct.map((v: any) => (typeof v === 'number' ? v : parseInt(v)))
+      : []
 
     onSubmit({
       ...values,
       correct: correctIndices,
-      answers: values.answers.filter((a: string) => a.trim() !== '')
-    });
-  };
+      answers: values.answers.filter((a: string) => a.trim() !== ''),
+    })
+  }
 
   return (
     <Form
@@ -62,18 +62,14 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
         answers: ['', '', '', ''],
         correct: [],
         image_path: '',
-        youtube_url: ''
+        youtube_url: '',
       }}
     >
       <Title level={4} style={{ marginBottom: 24 }}>
         {question ? 'Редагувати питання' : 'Додати нове питання'}
       </Title>
 
-      <Form.Item
-        name="block"
-        label="Блок"
-        rules={[{ required: true, message: 'Оберіть блок' }]}
-      >
+      <Form.Item name="block" label="Блок" rules={[{ required: true, message: 'Оберіть блок' }]}>
         <Select>
           {Object.entries(BLOCK_NAMES).map(([key, value]) => (
             <Select.Option key={key} value={parseInt(key)}>
@@ -105,23 +101,19 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                   >
                     <Input placeholder={`Варіант відповіді ${index + 1}`} />
                   </Form.Item>
-                  <Form.Item
-                    name="correct"
-                    valuePropName="checked"
-                    style={{ marginBottom: 0 }}
-                  >
+                  <Form.Item name="correct" valuePropName="checked" style={{ marginBottom: 0 }}>
                     <Checkbox
                       value={index}
                       onChange={(e) => {
-                        const currentCorrect = form.getFieldValue('correct') || [];
+                        const currentCorrect = form.getFieldValue('correct') || []
                         if (e.target.checked) {
                           form.setFieldsValue({
-                            correct: [...currentCorrect, index]
-                          });
+                            correct: [...currentCorrect, index],
+                          })
                         } else {
                           form.setFieldsValue({
-                            correct: currentCorrect.filter((i: number) => i !== index)
-                          });
+                            correct: currentCorrect.filter((i: number) => i !== index),
+                          })
                         }
                       }}
                       checked={form.getFieldValue('correct')?.includes(index)}
@@ -136,10 +128,10 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                   type="dashed"
                   onClick={() => {
                     if (fields.length < 4) {
-                      const answers = form.getFieldValue('answers');
+                      const answers = form.getFieldValue('answers')
                       form.setFieldsValue({
-                        answers: [...answers, '']
-                      });
+                        answers: [...answers, ''],
+                      })
                     }
                   }}
                   icon={<PlusOutlined />}
@@ -157,10 +149,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
       </Card>
 
       <Card title="Медіа контент (необов'язково)" style={{ marginBottom: 24 }}>
-        <Form.Item
-          name="youtube_url"
-          label="YouTube URL"
-        >
+        <Form.Item name="youtube_url" label="YouTube URL">
           <Input placeholder="https://www.youtube.com/watch?v=... або https://youtu.be/..." />
         </Form.Item>
 
@@ -174,13 +163,11 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
       </Card>
 
       <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-        <Button onClick={onCancel}>
-          Скасувати
-        </Button>
+        <Button onClick={onCancel}>Скасувати</Button>
         <Button type="primary" htmlType="submit" loading={loading}>
           {question ? 'Оновити' : 'Додати'} питання
         </Button>
       </Space>
     </Form>
-  );
-};
+  )
+}
