@@ -107,37 +107,207 @@ This is an Nx monorepo consisting of several TypeScript-based applications and l
 
 ### Prerequisites
 
-- Node.js (v16+)
+- Node.js v23 (required)
 - npm or yarn
 - MongoDB (local installation)
 - Nx CLI (`npm install -g nx`)
 
-### Installation
+### Installation and Running
 
-1. Clone the repository
+#### macOS
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/yourusername/tac-med.git
    cd tac-med
    ```
 
-2. Install dependencies
+2. **Install Node.js v23**
+   ```bash
+   # Using Homebrew
+   brew install node@23
+   
+   # Or using Node Version Manager (nvm)
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   nvm install 23
+   nvm use 23
+   ```
+
+3. **Install and run MongoDB locally**
+   ```bash
+   # Install MongoDB using Homebrew
+   brew tap mongodb/brew
+   brew install mongodb-community@7.0
+   
+   # Start MongoDB service
+   brew services start mongodb-community@7.0
+   
+   # Verify MongoDB is running
+   mongosh --eval "db.version()"
+   ```
+
+4. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. Set up MongoDB
-   - Install MongoDB locally
-   - Start MongoDB service
-   - Database will be created automatically on first run
-
-4. Build and run the application
+5. **Run the application**
    ```bash
-   # Build all projects
-   nx run-many --target=build --all
+   # In terminal 1 - Start the backend server
+   nx serve server
    
-   # Start the desktop application
+   # In terminal 2 - Start the frontend client
    nx serve client
    ```
+
+   The server will run on http://localhost:3333 and the client on http://localhost:4200
+
+#### Linux (Ubuntu/Debian)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/tac-med.git
+   cd tac-med
+   ```
+
+2. **Install Node.js v23**
+   ```bash
+   # Using NodeSource repository
+   curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   
+   # Or using Node Version Manager (nvm)
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   source ~/.bashrc
+   nvm install 23
+   nvm use 23
+   ```
+
+3. **Install and run MongoDB locally**
+   ```bash
+   # Import MongoDB public key
+   curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+   
+   # Add MongoDB repository
+   echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+   
+   # Update packages and install MongoDB
+   sudo apt-get update
+   sudo apt-get install -y mongodb-org
+   
+   # Start MongoDB service
+   sudo systemctl start mongod
+   sudo systemctl enable mongod
+   
+   # Verify MongoDB is running
+   mongosh --eval "db.version()"
+   ```
+
+4. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+5. **Run the application**
+   ```bash
+   # In terminal 1 - Start the backend server
+   nx serve server
+   
+   # In terminal 2 - Start the frontend client
+   nx serve client
+   ```
+
+   The server will run on http://localhost:3333 and the client on http://localhost:4200
+
+#### Windows
+
+1. **Clone the repository**
+   ```powershell
+   git clone https://github.com/yourusername/tac-med.git
+   cd tac-med
+   ```
+
+2. **Install Node.js v23**
+   - Download Node.js v23 from [https://nodejs.org/en/download/prebuilt-installer](https://nodejs.org/en/download/prebuilt-installer)
+   - Select version 23.x.x for Windows
+   - Run the installer and follow the installation wizard
+   - Verify installation:
+     ```powershell
+     node --version
+     npm --version
+     ```
+
+3. **Install and run MongoDB locally**
+   - Download MongoDB Community Server from [https://www.mongodb.com/try/download/community](https://www.mongodb.com/try/download/community)
+   - Choose Windows x64 platform
+   - Run the MSI installer
+   - During installation:
+     - Choose "Complete" setup
+     - Install MongoDB as a Windows Service
+     - Keep "Run service as Network Service user" selected
+   - MongoDB will start automatically as a Windows service
+   - Verify MongoDB is running:
+     ```powershell
+     # Open Command Prompt as Administrator
+     net start MongoDB
+     ```
+
+4. **Install dependencies**
+   ```powershell
+   npm install
+   ```
+
+5. **Run the application**
+   ```powershell
+   # In PowerShell terminal 1 - Start the backend server
+   nx serve server
+   
+   # In PowerShell terminal 2 - Start the frontend client
+   nx serve client
+   ```
+
+   The server will run on http://localhost:3333 and the client on http://localhost:4200
+
+### Initial Setup
+
+1. **Import test questions** (required for first run)
+   - Navigate to http://localhost:4200
+   - Click "Увійти як адміністратор" (Login as administrator)
+   - Use default password: `12345`
+   - Go to "Імпортувати питання" (Import questions)
+   - Upload the `comprehensive-questions.json` file from the project root
+
+2. **Test the application**
+   - Return to main menu
+   - Enter your full name in Cyrillic (e.g., "Чернобай Степан Бандерович")
+   - Click "Розпочати тестування" to start the test
+
+### Troubleshooting
+
+#### MongoDB Connection Issues
+- **macOS/Linux**: Check if MongoDB is running with `ps aux | grep mongod`
+- **Windows**: Check Windows Services for "MongoDB" service status
+- Ensure MongoDB is listening on default port 27017
+
+#### Node.js Version Issues
+- Ensure you're using Node.js v23 by running `node --version`
+- If using nvm, set default version: `nvm alias default 23`
+
+#### Port Already in Use
+- If port 3333 or 4200 is already in use:
+  ```bash
+  # Kill process on port (macOS/Linux)
+  lsof -ti:3333 | xargs kill -9
+  lsof -ti:4200 | xargs kill -9
+  
+  # Windows
+  netstat -ano | findstr :3333
+  taskkill /PID <PID> /F
+  ```
+
+#### Nx Command Not Found
+- Install Nx globally: `npm install -g nx`
+- Or use npx: `npx nx serve server`
 
 ## Development Guidelines
 

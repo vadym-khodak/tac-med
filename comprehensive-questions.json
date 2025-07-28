@@ -5,14 +5,14 @@
     "correct": [0],
     "block": 1,
     "image_path": "",
-    "youtube_url": ""
+    "youtube_url": "https://www.youtube.com/watch?v=ctU6gdVqxUI"
   },
   {
     "question": "Які основні принципи протоколу MARCH?",
     "answers": ["Масивна кровотеча", "Дихальні шляхи", "Дихання та вентиляція", "Всі вищеперераховані"],
     "correct": [3],
     "block": 1,
-    "image_path": "",
+    "image_path": "images/img-1.png",
     "youtube_url": ""
   },
   {
@@ -20,8 +20,8 @@
     "answers": ["Рятування життя на полі бою", "Лікування в лікарні", "Профілактика захворювань", "Реабілітація"],
     "correct": [0],
     "block": 1,
-    "image_path": "",
-    "youtube_url": ""
+    "image_path": "images/img-1.png",
+    "youtube_url": "https://www.youtube.com/watch?v=ctU6gdVqxUI"
   },
   {
     "question": "Пріоритет надання допомоги в тактичній медицині:",
