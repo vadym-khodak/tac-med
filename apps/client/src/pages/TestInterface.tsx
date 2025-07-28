@@ -245,9 +245,23 @@ export const TestInterface: React.FC = () => {
             <iframe
               width="100%"
               height="315"
-              src={currentQuestion.youtube_url.replace('youtu.be/', 'youtube.com/embed/')}
+              src={(() => {
+                const url = currentQuestion.youtube_url;
+                // Handle different YouTube URL formats
+                if (url.includes('youtube.com/watch?v=')) {
+                  const videoId = url.split('v=')[1].split('&')[0];
+                  return `https://www.youtube.com/embed/${videoId}`;
+                } else if (url.includes('youtu.be/')) {
+                  const videoId = url.split('youtu.be/')[1].split('?')[0];
+                  return `https://www.youtube.com/embed/${videoId}`;
+                } else if (url.includes('youtube.com/embed/')) {
+                  return url;
+                }
+                return url;
+              })()}
               title="YouTube video"
               frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           </div>
