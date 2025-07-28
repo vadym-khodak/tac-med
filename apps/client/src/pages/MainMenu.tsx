@@ -47,10 +47,10 @@ export const MainMenu: React.FC = () => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      justifyContent: 'center', 
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
       alignItems: 'center',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       padding: '20px'
@@ -73,7 +73,7 @@ export const MainMenu: React.FC = () => {
         </div>
 
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <Card 
+          <Card
             title={
               <Space>
                 <UserOutlined />
@@ -94,7 +94,7 @@ export const MainMenu: React.FC = () => {
                 help="Введіть три слова кирилицею, кожне починається з великої літери"
               >
                 <Input
-                  placeholder="Іванов Іван Іванович"
+                  placeholder="Чернобай Степан Бандерович"
                   size="large"
                   style={{ borderRadius: '8px' }}
                 />
@@ -105,7 +105,7 @@ export const MainMenu: React.FC = () => {
                   htmlType="submit"
                   size="large"
                   block
-                  style={{ 
+                  style={{
                     borderRadius: '8px',
                     height: '48px',
                     fontSize: '16px',
@@ -118,7 +118,7 @@ export const MainMenu: React.FC = () => {
             </Form>
           </Card>
 
-          <Card 
+          <Card
             title={
               <Space>
                 <SettingOutlined />
@@ -135,7 +135,7 @@ export const MainMenu: React.FC = () => {
               size="large"
               block
               onClick={handleAdminClick}
-              style={{ 
+              style={{
                 borderRadius: '8px',
                 height: '48px',
                 fontSize: '16px',
