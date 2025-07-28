@@ -7,6 +7,9 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
+import { QuestionsModule } from './questions/questions.module'
+import { ResultsModule } from './results/results.module'
+import { AdminModule } from './admin/admin.module'
 
 @Module({
   imports: [
@@ -16,13 +19,16 @@ import { UsersModule } from './users/users.module'
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: configService.get<string>('MONGO_URI') || 'mongodb://localhost:27017/tac-med',
       }),
       inject: [ConfigService],
     }),
     SentryModule.forRoot(),
     AuthModule,
     UsersModule,
+    QuestionsModule,
+    ResultsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

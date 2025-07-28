@@ -1,14 +1,14 @@
 import { ConfigProvider } from 'antd'
 import { Route, Routes } from 'react-router-dom'
 
-import { AppLayout } from './components/Layout'
-import { ProtectedRoute } from './components/ProtectedRoute'
 import { ThemeProvider, useTheme } from './contexts/ThemeContext'
 // Import pages
-import Dashboard from './pages/Dashboard'
-import { Login } from './pages/Login'
+import { MainMenu } from './pages/MainMenu'
+import { TestInterface } from './pages/TestInterface'
+import { TestResults } from './pages/TestResults'
+import { AdminLogin } from './pages/AdminLogin'
+import { AdminDashboard } from './pages/AdminDashboard'
 import NotFound from './pages/NotFound'
-import Users from './pages/Users'
 
 function AppContent() {
   const { themeConfig } = useTheme()
@@ -16,21 +16,11 @@ function AppContent() {
   return (
     <ConfigProvider theme={themeConfig}>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="admin">
-            <Route path="users" element={<Users />} />
-          </Route>
-          <Route index element={<Dashboard />} />
-        </Route>
+        <Route path="/" element={<MainMenu />} />
+        <Route path="/test" element={<TestInterface />} />
+        <Route path="/results" element={<TestResults />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </ConfigProvider>
