@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { ResultsService } from './results.service'
-import { ResultsController } from './results.controller'
-import { Result, ResultSchema } from './result.schema'
 import { QuestionsModule } from '../questions/questions.module'
+import { Result, ResultSchema } from './result.schema'
+import { ResultsController } from './results.controller'
+import { ResultsService } from './results.service'
 
 @Module({
   imports: [

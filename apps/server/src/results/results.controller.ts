@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Query, BadRequestException } from '@nestjs/common'
-import { ResultsService } from './results.service'
+import { BadRequestException, Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { CreateResultDto, TestAnswerDto } from './dto/create-result.dto'
+import { ResultsService } from './results.service'
 
 @Controller('results')
 export class ResultsController {

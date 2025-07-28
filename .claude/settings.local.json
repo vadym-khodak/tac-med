@@ -4,7 +4,8 @@
       "Bash(rm:*)",
       "Bash(npm install)",
       "Bash(nx show:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(nx biome:check:*)"
     ],
     "deny": []
   }

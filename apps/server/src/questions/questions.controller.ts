@@ -1,17 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
-import { QuestionsService } from './questions.service'
 import { CreateQuestionDto, ImportQuestionsDto } from './dto/create-question.dto'
+import { QuestionsService } from './questions.service'
 
 @Controller('questions')
 export class QuestionsController {
@@ -29,8 +29,8 @@ export class QuestionsController {
 
   @Get('by-block/:block')
   findByBlock(@Param('block') block: string) {
-    const blockNumber = parseInt(block)
-    if (isNaN(blockNumber) || blockNumber < 1 || blockNumber > 6) {
+    const blockNumber = Number.parseInt(block)
+    if (Number.isNaN(blockNumber) || blockNumber < 1 || blockNumber > 6) {
       throw new BadRequestException('Block must be a number between 1 and 6')
     }
     return this.questionsService.findByBlock(blockNumber)
@@ -38,14 +38,14 @@ export class QuestionsController {
 
   @Get('random')
   getRandomQuestions(@Query('block') block: string, @Query('count') count?: string) {
-    const blockNumber = parseInt(block)
-    const questionCount = count ? parseInt(count) : 10
+    const blockNumber = Number.parseInt(block)
+    const questionCount = count ? Number.parseInt(count) : 10
 
-    if (isNaN(blockNumber) || blockNumber < 1 || blockNumber > 6) {
+    if (Number.isNaN(blockNumber) || blockNumber < 1 || blockNumber > 6) {
       throw new BadRequestException('Block must be a number between 1 and 6')
     }
 
-    if (isNaN(questionCount) || questionCount < 1) {
+    if (Number.isNaN(questionCount) || questionCount < 1) {
       throw new BadRequestException('Count must be a positive number')
     }
 

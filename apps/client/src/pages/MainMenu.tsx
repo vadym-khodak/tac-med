@@ -1,6 +1,6 @@
+import { SettingOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Card, Form, Input, Space, Typography, message } from 'antd'
 import React, { useState } from 'react'
-import { Button, Input, Form, Typography, Space, Card, message } from 'antd'
-import { UserOutlined, SettingOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const { Title, Text } = Typography
@@ -8,7 +8,7 @@ const { Title, Text } = Typography
 export const MainMenu: React.FC = () => {
   const [form] = Form.useForm()
   const navigate = useNavigate()
-  const [fullName, setFullName] = useState('')
+  const [_fullName, setFullName] = useState('')
 
   const validateFullName = (_: any, value: string) => {
     if (!value) {

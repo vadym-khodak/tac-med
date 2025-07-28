@@ -1,8 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { Question, QuestionDocument } from './question.schema'
 import { CreateQuestionDto, ImportQuestionsDto } from './dto/create-question.dto'
+import { Question, QuestionDocument } from './question.schema'
 
 @Injectable()
 export class QuestionsService {
@@ -22,7 +22,7 @@ export class QuestionsService {
     return this.questionModel.find({ block }).exec()
   }
 
-  async getRandomQuestionsByBlock(block: number, count: number = 10): Promise<Question[]> {
+  async getRandomQuestionsByBlock(block: number, count = 10): Promise<Question[]> {
     const questions = await this.questionModel.aggregate([
       { $match: { block } },
       { $sample: { size: count } },
@@ -87,9 +87,9 @@ export class QuestionsService {
       counts[i] = 0
     }
 
-    results.forEach((result) => {
+    for (const result of results) {
       counts[result._id] = result.count
-    })
+    }
 
     return counts
   }

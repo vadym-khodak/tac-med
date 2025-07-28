@@ -1,6 +1,6 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common'
-import * as fs from 'fs/promises'
-import * as path from 'path'
+import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common'
 
 @Injectable()
 export class AdminService {
@@ -63,7 +63,7 @@ export class AdminService {
       }
 
       // Token valid for 1 hour
-      const tokenTime = parseInt(timestamp)
+      const tokenTime = Number.parseInt(timestamp)
       const currentTime = Date.now()
       const oneHour = 60 * 60 * 1000
 

@@ -3,13 +3,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER } from '@nestjs/core'
 import { MongooseModule } from '@nestjs/mongoose'
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup'
+import { AdminModule } from './admin/admin.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
-import { UsersModule } from './users/users.module'
 import { QuestionsModule } from './questions/questions.module'
 import { ResultsModule } from './results/results.module'
-import { AdminModule } from './admin/admin.module'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [

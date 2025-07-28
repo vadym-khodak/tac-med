@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray, IsObject, Min, Max, Matches } from 'class-validator'
+import { IsArray, IsNumber, IsObject, IsString, Matches, Max, Min } from 'class-validator'
 
 export class CreateResultDto {
   @IsString()

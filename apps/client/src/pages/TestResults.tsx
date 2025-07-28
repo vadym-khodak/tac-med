@@ -1,8 +1,8 @@
-import React from 'react'
-import { Card, Button, Typography, Space, Table, Progress, Tag } from 'antd'
 import { CheckCircleOutlined, HomeOutlined } from '@ant-design/icons'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { TestResult, BLOCK_NAMES, KnowledgeLevel } from '../types'
+import { Button, Card, Progress, Space, Table, Tag, Typography } from 'antd'
+import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { BLOCK_NAMES, KnowledgeLevel, TestResult } from '../types'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -65,7 +65,7 @@ export const TestResults: React.FC = () => {
 
   const blockData = Object.entries(typedResult.block_scores).map(([block, percentage]) => ({
     key: block,
-    block: parseInt(block),
+    block: Number.parseInt(block),
     correct: Math.round((percentage / 100) * 10),
     percentage,
   }))

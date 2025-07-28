@@ -8,7 +8,7 @@ export class Result {
   @Prop({
     required: true,
     validate: {
-      validator: function (fullName: string) {
+      validator: (fullName: string) => {
         const cyrillicPattern = /^[А-ЯІЇЄЁа-яіїєё]+$/
         const words = fullName.trim().split(/\s+/)
 
@@ -33,7 +33,7 @@ export class Result {
     required: true,
     type: Object,
     validate: {
-      validator: function (blockScores: Record<string, number>) {
+      validator: (blockScores: Record<string, number>) => {
         const blockKeys = Object.keys(blockScores)
         return (
           blockKeys.length === 6 &&

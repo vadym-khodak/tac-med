@@ -2,13 +2,13 @@ import { ConfigProvider } from 'antd'
 import { Route, Routes } from 'react-router-dom'
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext'
+import { AdminDashboard } from './pages/AdminDashboard'
+import { AdminLogin } from './pages/AdminLogin'
 // Import pages
 import { MainMenu } from './pages/MainMenu'
+import NotFound from './pages/NotFound'
 import { TestInterface } from './pages/TestInterface'
 import { TestResults } from './pages/TestResults'
-import { AdminLogin } from './pages/AdminLogin'
-import { AdminDashboard } from './pages/AdminDashboard'
-import NotFound from './pages/NotFound'
 
 function AppContent() {
   const { themeConfig } = useTheme()

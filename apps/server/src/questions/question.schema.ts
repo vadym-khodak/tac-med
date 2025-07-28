@@ -15,9 +15,7 @@ export class Question {
     required: true,
     type: [String],
     validate: {
-      validator: function (answers: string[]) {
-        return answers.length === 4
-      },
+      validator: (answers: string[]) => answers.length === 4,
       message: 'Answers array must contain exactly 4 items',
     },
   })
@@ -27,13 +25,10 @@ export class Question {
     required: true,
     type: [Number],
     validate: {
-      validator: function (correct: number[]) {
-        return (
-          correct.length > 0 &&
-          correct.every((index) => index >= 0 && index < 4) &&
-          correct.length <= 4
-        )
-      },
+      validator: (correct: number[]) =>
+        correct.length > 0 &&
+        correct.every((index) => index >= 0 && index < 4) &&
+        correct.length <= 4,
       message: 'Correct array must contain valid indices (0-3)',
     },
   })

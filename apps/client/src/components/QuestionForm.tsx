@@ -1,7 +1,7 @@
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Card, Checkbox, Form, Input, Select, Space, Typography } from 'antd'
 import React, { useEffect } from 'react'
-import { Form, Input, Select, Button, Space, Checkbox, Card, Typography } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Question, BLOCK_NAMES } from '../types'
+import { BLOCK_NAMES, Question } from '../types'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -42,7 +42,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
   const handleSubmit = (values: any) => {
     // Ensure correct is an array of numbers
     const correctIndices = Array.isArray(values.correct)
-      ? values.correct.map((v: any) => (typeof v === 'number' ? v : parseInt(v)))
+      ? values.correct.map((v: any) => (typeof v === 'number' ? v : Number.parseInt(v)))
       : []
 
     onSubmit({
@@ -72,7 +72,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
       <Form.Item name="block" label="Блок" rules={[{ required: true, message: 'Оберіть блок' }]}>
         <Select>
           {Object.entries(BLOCK_NAMES).map(([key, value]) => (
-            <Select.Option key={key} value={parseInt(key)}>
+            <Select.Option key={key} value={Number.parseInt(key)}>
               Блок {key}: {value}
             </Select.Option>
           ))}

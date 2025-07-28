@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import {
-  Card,
-  Button,
-  Radio,
-  Checkbox,
-  Typography,
-  Progress,
-  Space,
-  Modal,
-  message,
-  Spin,
-} from 'antd'
 import { ClockCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons'
-import { useNavigate, useLocation } from 'react-router-dom'
+import {
+  Button,
+  Card,
+  Checkbox,
+  Modal,
+  Progress,
+  Radio,
+  Space,
+  Spin,
+  Typography,
+  message,
+} from 'antd'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { questionsApi, resultsApi } from '../services/api'
-import { Question, TestAnswer, BLOCK_NAMES } from '../types'
+import { BLOCK_NAMES, Question, TestAnswer } from '../types'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -75,7 +75,7 @@ export const TestInterface: React.FC = () => {
         selected_answers: [],
       }))
       setAnswers(initialAnswers)
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка завантаження питань')
       navigate('/')
     } finally {
@@ -118,7 +118,7 @@ export const TestInterface: React.FC = () => {
     try {
       const result = await resultsApi.submitTest(fullName, answers)
       navigate('/results', { state: { result, fullName } })
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка збереження результатів')
     }
   }, [fullName, answers, navigate])
@@ -279,10 +279,12 @@ export const TestInterface: React.FC = () => {
                 if (url.includes('youtube.com/watch?v=')) {
                   const videoId = url.split('v=')[1].split('&')[0]
                   return `https://www.youtube.com/embed/${videoId}`
-                } else if (url.includes('youtu.be/')) {
+                }
+                if (url.includes('youtu.be/')) {
                   const videoId = url.split('youtu.be/')[1].split('?')[0]
                   return `https://www.youtube.com/embed/${videoId}`
-                } else if (url.includes('youtube.com/embed/')) {
+                }
+                if (url.includes('youtube.com/embed/')) {
                   return url
                 }
                 return url

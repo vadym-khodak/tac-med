@@ -1,12 +1,12 @@
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsNumber,
-  IsString,
-  Min,
-  Max,
-  ArrayMinSize,
-  ArrayMaxSize,
   IsOptional,
+  IsString,
+  Max,
+  Min,
 } from 'class-validator'
 
 export class CreateQuestionDto {

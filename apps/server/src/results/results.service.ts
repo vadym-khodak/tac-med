@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { Result, ResultDocument } from './result.schema'
-import { CreateResultDto, TestAnswerDto } from './dto/create-result.dto'
 import { QuestionsService } from '../questions/questions.service'
+import { CreateResultDto, TestAnswerDto } from './dto/create-result.dto'
+import { Result, ResultDocument } from './result.schema'
 
 @Injectable()
 export class ResultsService {
@@ -26,7 +26,7 @@ export class ResultsService {
   }
 
   async calculateTestResult(
-    fullName: string,
+    _fullName: string,
     answers: TestAnswerDto[],
   ): Promise<{
     blockScores: Record<string, number>
@@ -165,10 +165,10 @@ export class ResultsService {
       Максимальний: 0,
     }
 
-    results.forEach((result) => {
+    for (const result of results) {
       const level = this.getKnowledgeLevel(result.total_score)
       levelDistribution[level]++
-    })
+    }
 
     const recentTests = await this.resultModel.find().sort({ test_date: -1 }).limit(10).exec()
 

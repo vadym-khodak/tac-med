@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Post,
-  Body,
   BadRequestException,
-  Headers,
-  UnauthorizedException,
+  Body,
+  Controller,
   Get,
+  Headers,
+  Post,
+  UnauthorizedException,
 } from '@nestjs/common'
-import { AdminService } from './admin.service'
-import { ResultsService } from '../results/results.service'
 import { QuestionsService } from '../questions/questions.service'
+import { ResultsService } from '../results/results.service'
+import { AdminService } from './admin.service'
 
 @Controller('admin')
 export class AdminController {

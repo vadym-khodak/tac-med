@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios'
-import { Question, TestAnswer, TestResult, AdminStats, QuestionCount } from '../types'
+import { AdminStats, Question, QuestionCount, TestAnswer, TestResult } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 

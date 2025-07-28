@@ -1,6 +1,6 @@
+import { ArrowLeftOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Card, Form, Input, Space, Typography, message } from 'antd'
 import React, { useState } from 'react'
-import { Card, Input, Button, Typography, Space, message, Form } from 'antd'
-import { LockOutlined, UserOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { adminApi } from '../services/api'
 
@@ -21,7 +21,7 @@ export const AdminLogin: React.FC = () => {
 
       message.success('Успішний вхід')
       navigate('/admin/dashboard')
-    } catch (error: any) {
+    } catch (_error: any) {
       message.error('Невірний пароль')
     } finally {
       setLoading(false)

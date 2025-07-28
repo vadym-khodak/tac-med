@@ -1,49 +1,49 @@
-import React, { useState, useEffect } from 'react'
 import {
-  Card,
-  Table,
-  Button,
-  Space,
-  Typography,
-  Statistic,
-  Row,
-  Col,
-  Modal,
-  Form,
-  Input,
-  Upload,
-  message,
-  Tabs,
-  Tag,
-  Progress,
-  Popconfirm,
-  Drawer,
-} from 'antd'
-import {
+  BarChartOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  FileTextOutlined,
   LogoutOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
   SettingOutlined,
   UploadOutlined,
-  DownloadOutlined,
-  QuestionCircleOutlined,
   UserOutlined,
-  FileTextOutlined,
-  BarChartOutlined,
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
 } from '@ant-design/icons'
+import {
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Progress,
+  Row,
+  Space,
+  Statistic,
+  Table,
+  Tabs,
+  Tag,
+  Typography,
+  Upload,
+  message,
+} from 'antd'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import * as XLSX from 'xlsx'
+import { QuestionForm } from '../components/QuestionForm'
 import { adminApi, questionsApi } from '../services/api'
 import {
-  TestResult,
-  Question,
   AdminStats,
-  QuestionCount,
   BLOCK_NAMES,
   KnowledgeLevel,
+  Question,
+  QuestionCount,
+  TestResult,
 } from '../types'
-import { QuestionForm } from '../components/QuestionForm'
-import * as XLSX from 'xlsx'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -84,7 +84,7 @@ export const AdminDashboard: React.FC = () => {
       setQuestionsCount(dashboardData.questionsCount)
       setResults(resultsData)
       setQuestions(questionsData)
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка завантаження даних')
       navigate('/admin')
     } finally {
@@ -106,7 +106,7 @@ export const AdminDashboard: React.FC = () => {
       message.success('Пароль успішно змінено')
       setChangePasswordModal(false)
       changePasswordForm.resetFields()
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка зміни паролю')
     }
   }
@@ -146,7 +146,7 @@ export const AdminDashboard: React.FC = () => {
       setImportModal(false)
 
       return false // Prevent default upload
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка імпорту питань. Перевірте формат файлу.')
       return false
     }
@@ -171,7 +171,7 @@ export const AdminDashboard: React.FC = () => {
       await questionsApi.delete(id, token)
       message.success('Питання видалено')
       loadDashboardData(token)
-    } catch (error) {
+    } catch (_error) {
       message.error('Помилка видалення питання')
     }
   }
@@ -191,7 +191,7 @@ export const AdminDashboard: React.FC = () => {
       }
       setQuestionFormDrawer(false)
       loadDashboardData(token)
-    } catch (error) {
+    } catch (_error) {
       message.error(editingQuestion ? 'Помилка оновлення питання' : 'Помилка створення питання')
     } finally {
       setFormLoading(false)
@@ -431,7 +431,7 @@ export const AdminDashboard: React.FC = () => {
                   <Card size="small">
                     <Statistic
                       title={`Блок ${blockNum}`}
-                      value={questionsCount[parseInt(blockNum)] || 0}
+                      value={questionsCount[Number.parseInt(blockNum)] || 0}
                       prefix={<QuestionCircleOutlined />}
                     />
                     <Text type="secondary" style={{ fontSize: '12px' }}>
