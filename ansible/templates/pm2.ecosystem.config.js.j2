@@ -1,0 +1,40 @@
+module.exports = {
+  apps: [
+    {
+      name: 'tac-med-server',
+      script: './apps/server/dist/main.js',
+      cwd: '{{ app_dir }}',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: '{{ node_env }}',
+        PORT: {{ server_port }},
+        MONGO_URI: 'mongodb://127.0.0.1:{{ mongodb_port }}/{{ mongodb_database }}'
+      },
+      error_file: '{{ app_dir }}/logs/server-error.log',
+      out_file: '{{ app_dir }}/logs/server-out.log',
+      log_file: '{{ app_dir }}/logs/server-combined.log',
+      time: true
+    },
+    {
+      name: 'tac-med-client',
+      script: 'npx',
+      args: 'vite preview --port {{ client_port }} --host 0.0.0.0',
+      cwd: '{{ app_dir }}/apps/client',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: '{{ node_env }}',
+        VITE_API_URL: 'http://{{ ansible_host }}:{{ server_port }}'
+      },
+      error_file: '{{ app_dir }}/logs/client-error.log',
+      out_file: '{{ app_dir }}/logs/client-out.log',
+      log_file: '{{ app_dir }}/logs/client-combined.log',
+      time: true
+    }
+  ]
+};

@@ -1,0 +1,95 @@
+---
+# Main deployment playbook for tac-med application
+# This orchestrates the deployment of all components
+
+- name: Pre-deployment checks
+  hosts: all
+  become: yes
+  gather_facts: yes
+  
+  tasks:
+    - name: Check Ubuntu version
+      assert:
+        that:
+          - ansible_distribution == "Ubuntu"
+          - ansible_distribution_major_version | int >= 20
+        fail_msg: "This playbook requires Ubuntu 20.04 or newer"
+        success_msg: "Ubuntu version check passed"
+    
+    - name: Check required ports are not in use
+      wait_for:
+        port: "{{ item }}"
+        state: stopped
+        timeout: 5
+      with_items:
+        - "{{ server_port }}"
+        - "{{ client_port }}"
+        - "{{ mongodb_port }}"
+      ignore_errors: yes
+      register: port_check
+    
+    - name: Display deployment information
+      debug:
+        msg: |
+          === TAC-MED Deployment Information ===
+          Target Host: {{ ansible_host }}
+          Server Port: {{ server_port }}
+          Client Port: {{ client_port }}
+          MongoDB Port: {{ mongodb_port }}
+          Application Directory: {{ app_dir }}
+          =====================================
+
+# Deploy MongoDB
+- import_playbook: playbooks/mongodb.yml
+
+# Deploy Server
+- import_playbook: playbooks/server.yml
+
+# Deploy Client  
+- import_playbook: playbooks/client.yml
+
+# Post-deployment tasks
+- name: Post-deployment verification
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Verify all services are running
+      uri:
+        url: "{{ item.url }}"
+        method: GET
+        status_code: "{{ item.status }}"
+      with_items:
+        - { url: "http://127.0.0.1:{{ server_port }}/health", status: 200 }
+        - { url: "http://127.0.0.1:{{ client_port }}", status: 200 }
+      register: service_checks
+    
+    - name: Display PM2 status
+      shell: pm2 status
+      become_user: "{{ ansible_user }}"
+      register: pm2_status
+    
+    - name: Show PM2 status
+      debug:
+        var: pm2_status.stdout_lines
+    
+    - name: Display deployment summary
+      debug:
+        msg: |
+          === TAC-MED Deployment Complete ===
+          
+          Application is now accessible at:
+          - Frontend: http://{{ ansible_host }}:{{ client_port }}
+          - Backend API: http://{{ ansible_host }}:{{ server_port }}
+          - MongoDB: mongodb://{{ ansible_host }}:{{ mongodb_port }}/{{ mongodb_database }}
+          
+          To manage the application:
+          - SSH to: {{ ansible_user }}@{{ ansible_host }}
+          - View logs: pm2 logs
+          - Restart services: pm2 restart all
+          - Stop services: pm2 stop all
+          
+          Admin credentials have been generated and stored in:
+          {{ app_dir }}/server/.env
+          
+          ==================================
