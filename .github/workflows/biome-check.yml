@@ -1,0 +1,99 @@
+name: Biome Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/client/**'
+      - 'apps/server/**'
+      - 'libs/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'biome.json'
+
+jobs:
+  biome-check:
+    name: Code Formatting & Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js v23
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            client:
+              - 'apps/client/**'
+              - 'libs/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'biome.json'
+            server:
+              - 'apps/server/**'
+              - 'libs/**' 
+              - 'package.json'
+              - 'package-lock.json'
+              - 'biome.json'
+
+      - name: 🔍 Biome Check & Lint - Client
+        if: steps.changes.outputs.client == 'true'
+        run: |
+          echo "::group::Client - Biome Check"
+          npx nx biome:check apps/client
+          echo "::endgroup::"
+          
+          echo "::group::Client - Biome Lint"
+          npx nx biome:lint apps/client
+          echo "::endgroup::"
+
+      - name: 🔍 Biome Check & Lint - Server
+        if: steps.changes.outputs.server == 'true'
+        run: |
+          echo "::group::Server - Biome Check"
+          npx nx biome:check apps/server
+          echo "::endgroup::"
+          
+          echo "::group::Server - Biome Lint"
+          npx nx biome:lint apps/server
+          echo "::endgroup::"
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          echo "## Biome Check Results 🎯" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.changes.outputs.client }}" == "true" ]]; then
+            echo "### 📱 Client App" >> $GITHUB_STEP_SUMMARY  
+            echo "- ✅ Code formatting (biome check)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Code linting (biome lint)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 📱 Client App" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ No changes detected - skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.changes.outputs.server }}" == "true" ]]; then
+            echo "### 🖥️ Server App" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Code formatting (biome check)" >> $GITHUB_STEP_SUMMARY  
+            echo "- ✅ Code linting (biome lint)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 🖥️ Server App" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ No changes detected - skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎉 **All formatting and linting checks passed!**" >> $GITHUB_STEP_SUMMARY

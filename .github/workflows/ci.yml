@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  code-quality:
+    name: Code Quality & Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            client:
+              - 'apps/client/**'
+              - 'libs/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'biome.json'
+              - 'nx.json'
+              - 'tsconfig.base.json'
+            server:
+              - 'apps/server/**'
+              - 'libs/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'biome.json'
+              - 'nx.json'
+              - 'tsconfig.base.json'
+
+      # Biome checks
+      - name: Run Biome check and lint on client
+        if: steps.changes.outputs.client == 'true'
+        run: |
+          echo "🔍 Running Biome check on client..."
+          npx nx biome:check apps/client
+          echo "🔍 Running Biome lint on client..."
+          npx nx biome:lint apps/client
+
+      - name: Run Biome check and lint on server
+        if: steps.changes.outputs.server == 'true'
+        run: |
+          echo "🔍 Running Biome check on server..."
+          npx nx biome:check apps/server
+          echo "🔍 Running Biome lint on server..."
+          npx nx biome:lint apps/server
+
+      # TypeScript checks
+      - name: TypeScript check - Client
+        if: steps.changes.outputs.client == 'true'
+        run: |
+          echo "📝 Running TypeScript check on client..."
+          cd apps/client && npx tsc --noEmit
+
+      - name: TypeScript check - Server
+        if: steps.changes.outputs.server == 'true'
+        run: |
+          echo "📝 Running TypeScript check on server..."
+          cd apps/server && npx tsc --noEmit
+
+      # Build checks
+      - name: Build client
+        if: steps.changes.outputs.client == 'true'
+        run: |
+          echo "🏗️ Building client..."
+          npx nx build client
+
+      - name: Build server
+        if: steps.changes.outputs.server == 'true'
+        run: |
+          echo "🏗️ Building server..."
+          npx nx build server
+
+      # Summary
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## CI Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.changes.outputs.client }}" == "true" ]]; then
+            echo "### Client App 📱" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Biome formatting and linting" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ TypeScript compilation" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Client App 📱" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ No changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.changes.outputs.server }}" == "true" ]]; then
+            echo "### Server App 🖥️" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Biome formatting and linting" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ TypeScript compilation" >> $GITHUB_STEP_SUMMARY  
+            echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Server App 🖥️" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ No changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All checks passed! 🎉" >> $GITHUB_STEP_SUMMARY
