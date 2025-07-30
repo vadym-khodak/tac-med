@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, HomeOutlined } from '@ant-design/icons'
 import { Button, Card, Progress, Space, Table, Tag, Typography } from 'antd'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { BLOCK_NAMES, KnowledgeLevel, TestResult } from '../types'
 
@@ -27,6 +27,16 @@ export const TestResults: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { result, fullName } = location.state || {}
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   if (!result || !fullName) {
     navigate('/')
@@ -40,14 +50,18 @@ export const TestResults: React.FC = () => {
       title: 'Блок',
       dataIndex: 'block',
       key: 'block',
-      render: (block: number) => `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES]}`,
+      render: (block: number) => isMobile 
+        ? `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES].substring(0, 15)}...`
+        : `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES]}`,
+      width: isMobile ? 120 : undefined,
     },
     {
-      title: 'Правильних відповідей',
+      title: isMobile ? 'Прав.' : 'Правильних відповідей',
       dataIndex: 'correct',
       key: 'correct',
-      render: (correct: number) => `${correct} з 10`,
+      render: (correct: number) => `${correct}/10`,
       align: 'center' as const,
+      width: isMobile ? 60 : undefined,
     },
     {
       title: 'Відсоток',
@@ -58,8 +72,10 @@ export const TestResults: React.FC = () => {
           percent={percentage}
           size="small"
           status={percentage >= 60 ? 'success' : 'exception'}
+          style={{ minWidth: isMobile ? '60px' : '100px' }}
         />
       ),
+      width: isMobile ? 80 : undefined,
     },
   ]
 
@@ -81,23 +97,23 @@ export const TestResults: React.FC = () => {
       style={{
         minHeight: '100vh',
         backgroundColor: '#f5f5f5',
-        padding: '20px',
+        padding: isMobile ? '12px' : '20px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
       }}
     >
-      <Card style={{ maxWidth: 800, width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+      <Card style={{ maxWidth: isMobile ? '100%' : 800, width: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? 24 : 32 }}>
           <CheckCircleOutlined
             style={{
-              fontSize: '64px',
+              fontSize: isMobile ? '48px' : '64px',
               color: '#52c41a',
-              marginBottom: 16,
+              marginBottom: isMobile ? 12 : 16,
             }}
           />
-          <Title level={2}>Результати тестування</Title>
-          <Text type="secondary" style={{ fontSize: '16px' }}>
+          <Title level={isMobile ? 3 : 2}>Результати тестування</Title>
+          <Text type="secondary" style={{ fontSize: isMobile ? '14px' : '16px' }}>
             {fullName}
           </Text>
         </div>
@@ -105,7 +121,13 @@ export const TestResults: React.FC = () => {
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           {/* Block Results Table */}
           <Card title="Результати по блоках" size="small">
-            <Table columns={blockColumns} dataSource={blockData} pagination={false} size="small" />
+            <Table 
+              columns={blockColumns} 
+              dataSource={blockData} 
+              pagination={false} 
+              size="small"
+              scroll={{ x: isMobile ? 300 : undefined }}
+            />
           </Card>
 
           {/* Overall Statistics */}
@@ -114,17 +136,19 @@ export const TestResults: React.FC = () => {
               <div
                 style={{
                   display: 'flex',
+                  flexDirection: isMobile ? 'column' : 'row',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '16px',
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  gap: isMobile ? '8px' : '0',
+                  padding: isMobile ? '12px' : '16px',
                   backgroundColor: '#fafafa',
                   borderRadius: '8px',
                 }}
               >
-                <Text strong style={{ fontSize: '16px' }}>
+                <Text strong style={{ fontSize: isMobile ? '14px' : '16px' }}>
                   Загальна кількість правильних відповідей
                 </Text>
-                <Text style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>
+                <Text style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 'bold', color: '#1890ff' }}>
                   {totalCorrect} з 60
                 </Text>
               </div>
@@ -132,25 +156,27 @@ export const TestResults: React.FC = () => {
               <div
                 style={{
                   display: 'flex',
+                  flexDirection: isMobile ? 'column' : 'row',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '16px',
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  gap: isMobile ? '8px' : '0',
+                  padding: isMobile ? '12px' : '16px',
                   backgroundColor: '#fafafa',
                   borderRadius: '8px',
                 }}
               >
-                <Text strong style={{ fontSize: '16px' }}>
+                <Text strong style={{ fontSize: isMobile ? '14px' : '16px' }}>
                   Загальний відсоток правильних відповідей
                 </Text>
-                <div style={{ textAlign: 'right' }}>
-                  <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
+                <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
+                  <Text style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: '#1890ff' }}>
                     {typedResult.total_score}%
                   </Text>
                   <Progress
                     percent={typedResult.total_score}
                     size="small"
                     status={typedResult.total_score >= 60 ? 'success' : 'exception'}
-                    style={{ width: '200px', marginTop: '4px' }}
+                    style={{ width: isMobile ? '100%' : '200px', marginTop: '4px' }}
                   />
                 </div>
               </div>
@@ -158,19 +184,21 @@ export const TestResults: React.FC = () => {
               <div
                 style={{
                   display: 'flex',
+                  flexDirection: isMobile ? 'column' : 'row',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '16px',
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  gap: isMobile ? '8px' : '0',
+                  padding: isMobile ? '12px' : '16px',
                   backgroundColor: '#fafafa',
                   borderRadius: '8px',
                 }}
               >
-                <Text strong style={{ fontSize: '16px' }}>
+                <Text strong style={{ fontSize: isMobile ? '14px' : '16px' }}>
                   Ваш рівень теоретичних знань з тактичної медицини
                 </Text>
                 <Tag
                   color={getKnowledgeLevelColor(typedResult.knowledge_level as KnowledgeLevel)}
-                  style={{ fontSize: '16px', padding: '8px 16px', fontWeight: 'bold' }}
+                  style={{ fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '6px 12px' : '8px 16px', fontWeight: 'bold' }}
                 >
                   {typedResult.knowledge_level}
                 </Tag>
@@ -218,20 +246,21 @@ export const TestResults: React.FC = () => {
           )}
 
           {/* Back to Menu Button */}
-          <div style={{ textAlign: 'center', marginTop: 32 }}>
+          <div style={{ textAlign: 'center', marginTop: isMobile ? 24 : 32 }}>
             <Button
               type="primary"
-              size="large"
+              size={isMobile ? 'middle' : 'large'}
               icon={<HomeOutlined />}
               onClick={handleBackToMenu}
               style={{
-                minWidth: '200px',
-                height: '48px',
-                fontSize: '16px',
+                width: isMobile ? '100%' : undefined,
+                minWidth: isMobile ? undefined : '200px',
+                height: isMobile ? '40px' : '48px',
+                fontSize: isMobile ? '14px' : '16px',
                 fontWeight: 'bold',
               }}
             >
-              З результатами тестування ознайомлений
+              {isMobile ? 'Ознайомлений' : 'З результатами тестування ознайомлений'}
             </Button>
           </div>
         </Space>

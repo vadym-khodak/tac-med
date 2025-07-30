@@ -60,6 +60,7 @@ export const AdminDashboard: React.FC = () => {
   const [questionFormDrawer, setQuestionFormDrawer] = useState(false)
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null)
   const [formLoading, setFormLoading] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 576)
   const [changePasswordForm] = Form.useForm()
 
   useEffect(() => {
@@ -70,6 +71,15 @@ export const AdminDashboard: React.FC = () => {
     }
     loadDashboardData(token)
   }, [navigate])
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 576)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const loadDashboardData = async (token: string) => {
     try {
@@ -334,32 +344,50 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div
       style={{
-        padding: '24px',
+        padding: isMobile ? '12px' : '24px',
         minHeight: '100vh',
         backgroundColor: '#f5f5f5',
       }}
     >
       {/* Header */}
       <Card style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Панель адміністратора
-          </Title>
-          <Space>
-            <Button icon={<SettingOutlined />} onClick={() => setChangePasswordModal(true)}>
-              Змінити пароль
-            </Button>
-            <Button icon={<LogoutOutlined />} onClick={handleLogout}>
-              Вихід
-            </Button>
-          </Space>
-        </div>
+        <Row gutter={[16, 16]} justify="space-between" align="middle">
+          <Col xs={24} sm={12}>
+            <Title 
+              level={isMobile ? 3 : 2} 
+              style={{ 
+                margin: 0,
+                textAlign: isMobile ? 'center' : 'left'
+              }}
+            >
+              Панель адміністратора
+            </Title>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Space 
+              style={{ 
+                width: '100%', 
+                justifyContent: isMobile ? 'center' : 'flex-end' 
+              }}
+              wrap
+            >
+              <Button 
+                icon={<SettingOutlined />} 
+                onClick={() => setChangePasswordModal(true)}
+                size={isMobile ? 'small' : 'middle'}
+              >
+                {isMobile ? 'Пароль' : 'Змінити пароль'}
+              </Button>
+              <Button 
+                icon={<LogoutOutlined />} 
+                onClick={handleLogout}
+                size={isMobile ? 'small' : 'middle'}
+              >
+                Вихід
+              </Button>
+            </Space>
+          </Col>
+        </Row>
       </Card>
 
       <Tabs defaultActiveKey="statistics">
