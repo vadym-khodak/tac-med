@@ -125,6 +125,198 @@ This is an Nx monorepo consisting of several TypeScript-based applications and l
 
 ### Installation and Running
 
+#### Running with Docker Compose (Recommended)
+
+Docker Compose provides the easiest way to run the application with all dependencies pre-configured.
+
+### Installing Docker and Docker Compose
+
+#### macOS
+
+1. **Install Docker Desktop for Mac**
+   - Download Docker Desktop from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+   - Double-click `Docker.dmg` to open the installer
+   - Drag Docker.app to the Applications folder
+   - Start Docker Desktop from Applications
+   - Docker Compose is included with Docker Desktop
+
+2. **Verify installation**
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+#### Linux (Ubuntu/Debian)
+
+1. **Install Docker**
+   ```bash
+   # Update package index
+   sudo apt-get update
+   
+   # Install dependencies
+   sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+   
+   # Add Docker's official GPG key
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   
+   # Add Docker repository
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   
+   # Install Docker Engine
+   sudo apt-get update
+   sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   
+   # Add your user to docker group (to run without sudo)
+   sudo usermod -aG docker $USER
+   newgrp docker
+   ```
+
+2. **Install Docker Compose**
+   ```bash
+   # Download Docker Compose
+   sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   
+   # Apply executable permissions
+   sudo chmod +x /usr/local/bin/docker-compose
+   ```
+
+3. **Verify installation**
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+#### Windows
+
+1. **Install Docker Desktop for Windows**
+   - Download Docker Desktop from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+   - Run `Docker Desktop Installer.exe`
+   - Follow the installation wizard
+   - Docker Compose is included with Docker Desktop
+   - **Important**: Docker Desktop requires WSL 2 (Windows Subsystem for Linux)
+
+2. **Enable WSL 2 (if not already enabled)**
+   ```powershell
+   # Run PowerShell as Administrator
+   wsl --install
+   
+   # Restart your computer
+   ```
+
+3. **Verify installation**
+   ```powershell
+   docker --version
+   docker-compose --version
+   ```
+
+### Running the Application with Docker Compose
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/tac-med.git
+   cd tac-med
+   ```
+
+2. **Create environment file (optional)**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env file with your configurations (if needed)
+   ```
+
+3. **Build and run with Docker Compose**
+   ```bash
+   # Build and start all services
+   docker-compose up --build
+   
+   # Or run in detached mode (background)
+   docker-compose up -d --build
+   ```
+
+4. **Access the application**
+   - Client application: http://localhost:80
+   - Server API: http://localhost:3000
+   - MongoDB: localhost:27018 (mapped from container's 27017)
+
+5. **Stop the application**
+   ```bash
+   # Stop all services
+   docker-compose down
+   
+   # Stop and remove volumes (includes database data)
+   docker-compose down -v
+   ```
+
+### Docker Compose Commands
+
+```bash
+# View running containers
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# View logs for specific service
+docker-compose logs -f server
+docker-compose logs -f client
+
+# Restart a specific service
+docker-compose restart server
+
+# Execute commands in running container
+docker-compose exec server sh
+docker-compose exec mongo mongosh
+
+# Rebuild without cache
+docker-compose build --no-cache
+```
+
+### Troubleshooting Docker
+
+1. **Port already in use**
+   ```bash
+   # Check what's using the port
+   # macOS/Linux
+   lsof -i :3000
+   lsof -i :80
+   
+   # Windows
+   netstat -ano | findstr :3000
+   netstat -ano | findstr :80
+   ```
+
+2. **Permission denied errors (Linux)**
+   ```bash
+   # Add user to docker group
+   sudo usermod -aG docker $USER
+   
+   # Log out and back in, or run
+   newgrp docker
+   ```
+
+3. **Docker Desktop not starting (Windows)**
+   - Ensure virtualization is enabled in BIOS
+   - Ensure WSL 2 is properly installed
+   - Try running Docker Desktop as Administrator
+
+4. **Clear Docker cache**
+   ```bash
+   # Remove all stopped containers
+   docker container prune
+   
+   # Remove all unused images
+   docker image prune -a
+   
+   # Remove all unused volumes
+   docker volume prune
+   
+   # Remove everything (careful!)
+   docker system prune -a --volumes
+   ```
+
+### Manual Installation (Alternative)
+
 #### macOS
 
 1. **Clone the repository**
