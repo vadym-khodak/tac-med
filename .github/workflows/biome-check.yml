@@ -4,12 +4,12 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'apps/client/**'
-      - 'apps/server/**'
-      - 'libs/**'
+      - 'client/**'
+      - 'server/**'
       - 'package.json'
       - 'package-lock.json'
-      - 'biome.json'
+      - 'client/biome.json'
+      - 'server/biome.json'
 
 jobs:
   biome-check:
@@ -27,7 +27,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm run install:all
 
       - name: Detect changes
         id: changes
@@ -35,38 +35,30 @@ jobs:
         with:
           filters: |
             client:
-              - 'apps/client/**'
-              - 'libs/**'
+              - 'client/**'
               - 'package.json'
               - 'package-lock.json'
-              - 'biome.json'
+              - 'client/package.json'
+              - 'client/biome.json'
             server:
-              - 'apps/server/**'
-              - 'libs/**' 
+              - 'server/**'
               - 'package.json'
               - 'package-lock.json'
-              - 'biome.json'
+              - 'server/package.json'
+              - 'server/biome.json'
 
       - name: 🔍 Biome Check & Lint - Client
         if: steps.changes.outputs.client == 'true'
         run: |
           echo "::group::Client - Biome Check"
-          npx nx biome:check apps/client
-          echo "::endgroup::"
-          
-          echo "::group::Client - Biome Lint"
-          npx nx biome:lint apps/client
+          npm run check:client
           echo "::endgroup::"
 
       - name: 🔍 Biome Check & Lint - Server
         if: steps.changes.outputs.server == 'true'
         run: |
           echo "::group::Server - Biome Check"
-          npx nx biome:check apps/server
-          echo "::endgroup::"
-          
-          echo "::group::Server - Biome Lint"
-          npx nx biome:lint apps/server
+          npm run check:server
           echo "::endgroup::"
 
       - name: 📊 Summary

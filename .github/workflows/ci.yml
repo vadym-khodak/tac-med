@@ -24,7 +24,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm run install:all
 
       - name: Check for changes
         id: changes
@@ -32,64 +32,58 @@ jobs:
         with:
           filters: |
             client:
-              - 'apps/client/**'
-              - 'libs/**'
+              - 'client/**'
               - 'package.json'
               - 'package-lock.json'
-              - 'biome.json'
-              - 'nx.json'
+              - 'client/package.json'
+              - 'client/biome.json'
               - 'tsconfig.base.json'
             server:
-              - 'apps/server/**'
-              - 'libs/**'
+              - 'server/**'
               - 'package.json'
               - 'package-lock.json'
-              - 'biome.json'
-              - 'nx.json'
+              - 'server/package.json'
+              - 'server/biome.json'
               - 'tsconfig.base.json'
 
       # Biome checks
-      - name: Run Biome check and lint on client
+      - name: Run Biome check on client
         if: steps.changes.outputs.client == 'true'
         run: |
           echo "🔍 Running Biome check on client..."
-          npx nx biome:check apps/client
-          echo "🔍 Running Biome lint on client..."
-          npx nx biome:lint apps/client
+          npm run check:client
 
-      - name: Run Biome check and lint on server
+      - name: Run Biome check on server
         if: steps.changes.outputs.server == 'true'
         run: |
           echo "🔍 Running Biome check on server..."
-          npx nx biome:check apps/server
-          echo "🔍 Running Biome lint on server..."
-          npx nx biome:lint apps/server
+          npm run check:server
 
       # TypeScript checks
       - name: TypeScript check - Client
         if: steps.changes.outputs.client == 'true'
         run: |
           echo "📝 Running TypeScript check on client..."
-          cd apps/client && npx tsc --noEmit
+          cd client && npx tsc --noEmit
 
       - name: TypeScript check - Server
         if: steps.changes.outputs.server == 'true'
         run: |
           echo "📝 Running TypeScript check on server..."
-          cd apps/server && npx tsc --noEmit
+          cd server && npx tsc --noEmit
 
       # Build checks
       - name: Build client
         if: steps.changes.outputs.client == 'true'
         run: |
           echo "🏗️ Building client..."
-          npx nx build client
+          npm run build:client
 
       - name: Build server
         if: steps.changes.outputs.server == 'true'
         run: |
           echo "🏗️ Building server..."
-          npx nx build server
+          npm run build:server
 
       # Summary
       - name: Generate summary

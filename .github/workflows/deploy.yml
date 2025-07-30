@@ -22,9 +22,9 @@ jobs:
         with:
           filters: |
             client:
-              - 'apps/client/**'
+              - 'client/**'
             server:
-              - 'apps/server/**'
+              - 'server/**'
 
   deploy-client:
     needs: check_changes
@@ -54,10 +54,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm run install:all
 
       - name: Build client
-        run: npx nx build client --prod
+        run: npm run build:client
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -68,7 +68,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync apps/client/dist s3://tac-med-static-assets --delete
+          aws s3 sync client/dist s3://tac-med-static-assets --delete
 
       - name: Invalidate CloudFront cache
         run: |
@@ -106,13 +106,13 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm run install:all
 
       - name: Build server
-        run: npx nx build server --prod
+        run: npm run build:server
 
       - name: Install production dependencies
-        run: cd apps/server/dist && npm ci --omit=dev --ignore-scripts --production
+        run: cd server/dist && npm ci --omit=dev --ignore-scripts --production
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -122,7 +122,7 @@ jobs:
           aws-region: eu-central-1
 
       - name: Deploy with Serverless
-        working-directory: apps/server
+        working-directory: server
         run: |
           npm install -g serverless@^4.12.0
           npm install serverless-domain-manager@latest
