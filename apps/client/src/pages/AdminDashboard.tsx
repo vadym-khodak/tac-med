@@ -290,15 +290,15 @@ export const AdminDashboard: React.FC = () => {
       title: 'Медіа',
       key: 'media',
       render: (record: Question) => (
-        <Space>
+        <Space direction="vertical" size="small">
           {record.youtube_url && <Tag color="red">YouTube</Tag>}
           {record.image_path && <Tag color="blue">Зображення</Tag>}
         </Space>
       ),
-      width: 100,
+      width: 120,
     },
     {
-      title: 'Дії',
+      title: '',
       key: 'actions',
       render: (record: Question) => (
         <Space>
@@ -308,7 +308,7 @@ export const AdminDashboard: React.FC = () => {
             onClick={() => handleEditQuestion(record)}
             size="small"
           >
-            Редагувати
+
           </Button>
           <Popconfirm
             title="Видалити питання?"
@@ -318,7 +318,7 @@ export const AdminDashboard: React.FC = () => {
             cancelText="Ні"
           >
             <Button type="link" danger icon={<DeleteOutlined />} size="small">
-              Видалити
+
             </Button>
           </Popconfirm>
         </Space>
