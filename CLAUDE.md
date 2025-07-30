@@ -59,7 +59,7 @@ docker-compose up --build
 ### Tech Stack
 - **Platform**: Pure Node.js with TypeScript
 - **Frontend**: React with Vite, served on port 4200
-- **Backend**: NestJS server on port 3333
+- **Backend**: NestJS server on port 3000
 - **Database**: MongoDB (local, port 27017)
 - **Code Quality**: Biome for linting/formatting
 
@@ -121,7 +121,7 @@ tac-med/
    - No explicit any types
 
 2. **Server Endpoints**
-   - Base URL: http://localhost:3333
+   - Base URL: http://localhost:3000
    - CORS enabled for client origin
    - MongoDB connection string should be configured
 

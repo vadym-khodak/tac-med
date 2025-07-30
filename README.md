@@ -228,7 +228,7 @@ Docker Compose provides the easiest way to run the application with all dependen
 
 4. **Access the application**
    - Client application: http://localhost:8080
-   - Server API: http://localhost:3333
+   - Server API: http://localhost:3000
    - MongoDB: localhost:27018 (mapped from container's 27017)
 
 5. **Stop the application**
@@ -270,11 +270,11 @@ docker-compose build --no-cache
    ```bash
    # Check what's using the port
    # macOS/Linux
-   lsof -i :3333
+   lsof -i :3000
    lsof -i :80
    
    # Windows
-   netstat -ano | findstr :3333
+   netstat -ano | findstr :3000
    netstat -ano | findstr :80
    ```
 
@@ -359,7 +359,7 @@ docker-compose build --no-cache
    npm run start:client
    ```
 
-   The server will run on http://localhost:3333 and the client on http://localhost:4200
+   The server will run on http://localhost:3000 and the client on http://localhost:4200
 
 #### Linux (Ubuntu/Debian)
 
@@ -420,7 +420,7 @@ docker-compose build --no-cache
    npm run start:client
    ```
 
-   The server will run on http://localhost:3333 and the client on http://localhost:4200
+   The server will run on http://localhost:3000 and the client on http://localhost:4200
 
 #### Windows
 
@@ -469,7 +469,7 @@ docker-compose build --no-cache
    nx serve client
    ```
 
-   The server will run on http://localhost:3333 and the client on http://localhost:4200
+   The server will run on http://localhost:3000 and the client on http://localhost:4200
 
 ### Initial Setup
 
@@ -497,14 +497,14 @@ docker-compose build --no-cache
 - If using nvm, set default version: `nvm alias default 23`
 
 #### Port Already in Use
-- If port 3333 or 4200 is already in use:
+- If port 3000 or 4200 is already in use:
   ```bash
   # Kill process on port (macOS/Linux)
-  lsof -ti:3333 | xargs kill -9
+  lsof -ti:3000 | xargs kill -9
   lsof -ti:4200 | xargs kill -9
   
   # Windows
-  netstat -ano | findstr :3333
+  netstat -ano | findstr :3000
   taskkill /PID <PID> /F
   ```
 

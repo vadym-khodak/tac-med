@@ -25,6 +25,6 @@ RUN npm install -g pm2@latest
 
 RUN npm install --only=production --silent
 
-EXPOSE 3333
+EXPOSE 3000
 
 ENTRYPOINT ["pm2-runtime","dist/main.js"]

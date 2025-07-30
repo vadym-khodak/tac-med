@@ -4,11 +4,11 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
     ports:
-      - "3333:3333"
+      - "3000:3000"
     environment:
-      - PORT=3333
+      - PORT=3000
       - MONGO_URI=mongodb://mongo:27017/tac-med
-      - ORIGIN_URL=http://localhost
+      - ORIGIN_URL=http://localhost:8080
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - SENTRY_DSN=${SENTRY_DSN}
@@ -24,7 +24,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      - VITE_API_URL=http://localhost:3333
+      - VITE_API_URL=http://localhost:3000
     depends_on:
       - server
     networks:
