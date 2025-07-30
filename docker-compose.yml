@@ -1,12 +1,12 @@
 services:
   server:
     build:
-      context: .
-      dockerfile: ./apps/server/Dockerfile
+      context: ./server
+      dockerfile: ./Dockerfile
     ports:
-      - "3000:3000"
+      - "3333:3333"
     environment:
-      - PORT=3000
+      - PORT=3333
       - MONGO_URI=mongodb://mongo:27017/tac-med
       - ORIGIN_URL=http://localhost
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
@@ -19,12 +19,12 @@ services:
 
   client:
     build:
-      context: .
-      dockerfile: ./apps/client/Dockerfile
+      context: ./client
+      dockerfile: ./Dockerfile
     ports:
       - "80:80"
     environment:
-      - VITE_API_URL=http://localhost:3000
+      - VITE_API_URL=http://localhost:3333
     depends_on:
       - server
     networks:

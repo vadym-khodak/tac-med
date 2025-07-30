@@ -44,8 +44,8 @@ A desktop application for tactical medicine knowledge testing based on the MARCH
 
 - **Platform**: Windows 7, 10, 11
 - **Language**: TypeScript
-- **Monorepo Tool**: Nx
-- **Frontend**: Desktop GUI application
+- **Frontend**: React with Vite
+- **Backend**: NestJS with Express
 - **Database**: MongoDB (local)
 - **Image Format**: JPG (centered, adaptive size)
 - **Video Support**: YouTube integration
@@ -101,18 +101,11 @@ A desktop application for tactical medicine knowledge testing based on the MARCH
 
 ## Project Structure
 
-This is an Nx monorepo consisting of several TypeScript-based applications and libraries:
+This is a Node.js project with two separate applications:
 
-### Apps
-- **apps/server** - Backend API server
-- **apps/client** - Desktop GUI application
-- **apps/admin** - Administrator interface
-
-### Libraries
-- **libs/shared/types** - Shared TypeScript interfaces and types
-- **libs/shared/utils** - Common utilities and helpers
-- **libs/database** - MongoDB connection and models
-- **libs/ui/components** - Shared UI components
+### Applications
+- **server/** - NestJS backend API server
+- **client/** - React frontend application
 
 ## Getting Started
 
@@ -121,7 +114,6 @@ This is an Nx monorepo consisting of several TypeScript-based applications and l
 - Node.js v23 (required)
 - npm or yarn
 - MongoDB (local installation)
-- Nx CLI (`npm install -g nx`)
 
 ### Installation and Running
 
@@ -236,7 +228,7 @@ Docker Compose provides the easiest way to run the application with all dependen
 
 4. **Access the application**
    - Client application: http://localhost:80
-   - Server API: http://localhost:3000
+   - Server API: http://localhost:3333
    - MongoDB: localhost:27018 (mapped from container's 27017)
 
 5. **Stop the application**
@@ -278,11 +270,11 @@ docker-compose build --no-cache
    ```bash
    # Check what's using the port
    # macOS/Linux
-   lsof -i :3000
+   lsof -i :3333
    lsof -i :80
    
    # Windows
-   netstat -ano | findstr :3000
+   netstat -ano | findstr :3333
    netstat -ano | findstr :80
    ```
 
@@ -351,16 +343,20 @@ docker-compose build --no-cache
 
 4. **Install dependencies**
    ```bash
-   npm install
+   npm run install:all
    ```
 
 5. **Run the application**
    ```bash
-   # In terminal 1 - Start the backend server
-   nx serve server
+   # Run both server and client concurrently
+   npm start
    
-   # In terminal 2 - Start the frontend client
-   nx serve client
+   # Or run individually:
+   # Terminal 1 - Start the backend server
+   npm run start:server
+   
+   # Terminal 2 - Start the frontend client
+   npm run start:client
    ```
 
    The server will run on http://localhost:3333 and the client on http://localhost:4200
@@ -408,16 +404,20 @@ docker-compose build --no-cache
 
 4. **Install dependencies**
    ```bash
-   npm install
+   npm run install:all
    ```
 
 5. **Run the application**
    ```bash
-   # In terminal 1 - Start the backend server
-   nx serve server
+   # Run both server and client concurrently
+   npm start
    
-   # In terminal 2 - Start the frontend client
-   nx serve client
+   # Or run individually:
+   # Terminal 1 - Start the backend server
+   npm run start:server
+   
+   # Terminal 2 - Start the frontend client
+   npm run start:client
    ```
 
    The server will run on http://localhost:3333 and the client on http://localhost:4200
@@ -508,39 +508,24 @@ docker-compose build --no-cache
   taskkill /PID <PID> /F
   ```
 
-#### Nx Command Not Found
-- Install Nx globally: `npm install -g nx`
-- Or use npx: `npx nx serve server`
 
 ## Development Guidelines
 
-### Nx Commands
+### Build Commands
 
-- Generate a new app:
+- Build all applications:
   ```bash
-  nx g @nx/node:app my-app
+  npm run build
   ```
 
-- Generate a new library:
+- Build server only:
   ```bash
-  nx g @nx/node:lib my-lib
+  npm run build:server
   ```
 
-- Run tests:
+- Build client only:
   ```bash
-  nx test my-app
-  nx run-many --target=test --all
-  ```
-
-- Build:
-  ```bash
-  nx build my-app
-  nx run-many --target=build --all
-  ```
-
-- Analyze dependencies:
-  ```bash
-  nx graph
+  npm run build:client
   ```
 
 ### Code Standards
@@ -585,7 +570,7 @@ Questions can be imported via JSON in the following format:
 
 1. Create a new branch following the naming convention
 2. Make your changes
-3. Ensure all tests pass (`nx affected:test`)
+3. Ensure code quality standards are met
 4. Submit a pull request for review
 
 ## License

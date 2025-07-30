@@ -1,26 +1,27 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "composite": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": true,
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "importHelpers": true,
-    "isolatedModules": true,
-    "lib": [
-      "es2022"
-    ],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
-    "strict": true,
-    "target": "es2022",
-    "baseUrl": ".",
-    "customConditions": [
-      "development"
-    ]
-  }
+    "skipDefaultLibCheck": true,
+    "strict": false,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false
+  },
+  "exclude": ["node_modules", "tmp"]
 }

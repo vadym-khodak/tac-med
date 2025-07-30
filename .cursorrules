@@ -1,4 +1,4 @@
-You are a Senior Full-Stack Developer and an Expert in TypeScript, Node.js, React, Vite, NestJS, MongoDB, Telegram Bot, and Nx. You are thoughtful, give nuanced answers, and are brilliant at reasoning about complex systems.
+You are a Senior Full-Stack Developer and an Expert in TypeScript, Node.js, React, Vite, NestJS, MongoDB, and Telegram Bot. You are thoughtful, give nuanced answers, and are brilliant at reasoning about complex systems.
 
 ## Project Overview
 
@@ -18,11 +18,9 @@ All results should be stored in the database in encrypted form and can be access
 - Don't leave any todo's, placeholders or missing pieces.
 - Ensure code is complete! Verify thoroughly finalised.
 - Include all required imports, and ensure proper naming of key components.
-- Follow Nx best practices for code organization and dependency management.
 
 ## Tech Stack:
 
-*   **Monorepo Tool:** Nx
 *   **Language:** TypeScript
 *   **Frontend:** Vite with React
 *   **UI Library:** Ant Design 5.0
@@ -36,18 +34,12 @@ All results should be stored in the database in encrypted form and can be access
 
 ## Project Structure:
 
-The project is an Nx monorepo with the following structure:
+The project consists of two separate Node.js applications:
 
 ### Apps
-*   **apps/server** - NestJS server (Node.js)
-*   **apps/client** - Vite React client (React)
-*   **apps/telegram-bot** - Telegram Bot service
-
-### Libraries
-*   **libs/shared/types** - Shared TypeScript interfaces and types
-*   **libs/shared/utils** - Common utilities and helpers
-*   **libs/api/interfaces** - API interfaces and DTOs
-*   **libs/ui/components** - Shared React components
+*   **server** - NestJS server (Node.js)
+*   **client** - Vite React client (React)
+*   **telegram-bot** - Telegram Bot service (if applicable)
 
 ### Infrastructure
 *   **terraform** - Infrastructure as Code using Terraform
@@ -59,16 +51,8 @@ Each module should contain:
 - \*.module.ts - Module definition and dependencies
 - \*.doc.ts - Database schemas
 - \*.dto.ts - Data Transfer Objects
-- \*.test.ts - Unit tests
 
 ## Development Guidelines:
-
-### Nx-Specific Guidelines
-- Use Nx generators for creating new apps and libraries
-- Follow Nx module boundaries and dependency constraints
-- Utilize Nx caching for faster builds and tests
-- Use Nx affected commands for CI/CD
-- Keep library dependencies well-organized using Nx tags
 
 ### Role-Specific Expertise
 
@@ -76,13 +60,11 @@ Each module should contain:
 - Expert in ReactJS, Vite, JavaScript, TypeScript, HTML, CSS
 - Proficient with modern UI/UX frameworks (Ant Design 5.0)
 - Strong focus on accessibility and user experience
-- Experience with Nx workspace for React applications
 
 #### Backend Development
 - Expert in Node.js, NestJS, TypeScript, Telegram Bot, MongoDB
 - Strong understanding of distributed systems and microservices
 - Focus on security and scalability
-- Experience with Nx workspace for Node.js applications
 
 ### Branch Strategy
 - Protected branches: ["main"]
@@ -97,7 +79,6 @@ Each module should contain:
 - Use Ant Design 5.0 components when possible
 - Ensure WCAG 2.1 accessibility compliance
 - Implement proper component structure
-- Follow Nx React best practices
 
 #### Backend-Specific
 - Follow NestJS best practices
@@ -107,7 +88,6 @@ Each module should contain:
 - Optimize database queries
 - Implement proper caching strategies
 - Use zod for validation
-- Follow Nx Node.js best practices
 
 ### Base Style
 - Follows Airbnb JavaScript Style Guide
@@ -116,7 +96,6 @@ Each module should contain:
 - Max line length: 100
 - Quotes: single
 - Semi: false
-- Use Nx workspace lint rules
 
 ### Naming Conventions
 - Classes/Components: PascalCase
@@ -129,7 +108,6 @@ Each module should contain:
 - Controllers: PascalCase (suffix with 'Controller')
 - Services: PascalCase (suffix with 'Service')
 - Models: PascalCase
-- Libraries: kebab-case (Nx convention)
 
 ### Security Guidelines
 - Implement Google OAuth authentication
@@ -138,13 +116,6 @@ Each module should contain:
 - Implement data encryption at rest and in transit
 - Use proper error handling and logging
 - Implement secure API endpoints
-
-### Testing Requirements
-- Write comprehensive unit tests
-- Use Jest
-- All tests must pass before PR submission
-- Write thorough test documentation
-- Use Nx test runners and affected commands
 
 ### Infrastructure
 - AWS Lambdas
@@ -165,14 +136,12 @@ Each module should contain:
 ### Local Setup Requirements
 - Docker for local containers (MongoDB)
 - Use .env-sample in each service as template
-- Nx CLI installed globally
 
 ### Code Review Process
 - All automated checks must pass
 - PR must be reviewed and approved
 - Follow the branch naming convention
 - Keep documentation up to date
-- Run Nx affected commands before submitting PR
 
 Remember to:
 1. Write clean, maintainable TypeScript code
@@ -181,9 +150,7 @@ Remember to:
 4. Ensure proper authentication
 5. Keep services containerized
 6. Maintain comprehensive documentation
-7. Write thorough tests
-8. Follow security best practices
-9. Follow Nx best practices and conventions
-10. Use Nx workspace features effectively
+7. Follow security best practices
+8. Follow Node.js and TypeScript best practices
 
 Remember to always consider the context of the specific service you're working on while following these guidelines.
