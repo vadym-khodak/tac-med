@@ -1,7 +1,12 @@
-import { IUser } from '@tac-med/shared-types'
 import { Expose, Transform } from 'class-transformer'
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator'
 import { UserRole } from './user.doc'
+
+export interface IUser {
+  id: string
+  email: string
+  name: string
+}
 
 export class UserDto implements IUser {
   @Expose()

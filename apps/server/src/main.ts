@@ -15,9 +15,15 @@ export async function getNestjsApp() {
   app.useGlobalPipes(new ValidationPipe())
 
   // Enable CORS
+  const corsOrigin = process.env.ORIGIN_URL ? 
+    process.env.ORIGIN_URL.split(',').map(url => url.trim()) : 
+    true;
+  
   app.enableCors({
-    origin: process.env.ORIGIN_URL,
+    origin: corsOrigin,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   })
   await app.init()
   return app

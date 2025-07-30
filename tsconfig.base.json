@@ -21,11 +21,6 @@
     "baseUrl": ".",
     "customConditions": [
       "development"
-    ],
-    "paths": {
-      "@tac-med/shared-types": [
-        "libs/shared/types/src/index.ts"
-      ]
-    }
+    ]
   }
 }
