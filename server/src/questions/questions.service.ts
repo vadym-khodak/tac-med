@@ -76,7 +76,7 @@ export class QuestionsService {
         },
       },
       {
-        $sort: { _id: 1 as 1 },
+        $sort: { _id: 1 },
       },
     ]
 

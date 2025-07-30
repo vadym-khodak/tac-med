@@ -22,6 +22,7 @@ export class AdminController {
   @Post('login')
   async login(@Body() loginData: { password: string }) {
     const { password } = loginData
+    console.log(password)
 
     if (!password) {
       throw new BadRequestException('Password is required')

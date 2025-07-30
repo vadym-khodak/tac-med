@@ -97,7 +97,10 @@ export const AdminDashboard: React.FC = () => {
     navigate('/admin')
   }
 
-  const handleChangePassword = async (values: { oldPassword: string; newPassword: string }) => {
+  const handleChangePassword = async (values: {
+    oldPassword: string
+    newPassword: string
+  }) => {
     const token = localStorage.getItem('adminToken')
     if (!token) return
 
@@ -307,9 +310,7 @@ export const AdminDashboard: React.FC = () => {
             icon={<EditOutlined />}
             onClick={() => handleEditQuestion(record)}
             size="small"
-          >
-
-          </Button>
+          />
           <Popconfirm
             title="Видалити питання?"
             description="Ця дія незворотна. Питання буде видалено назавжди."
@@ -317,9 +318,7 @@ export const AdminDashboard: React.FC = () => {
             okText="Так"
             cancelText="Ні"
           >
-            <Button type="link" danger icon={<DeleteOutlined />} size="small">
-
-            </Button>
+            <Button type="link" danger icon={<DeleteOutlined />} size="small" />
           </Popconfirm>
         </Space>
       ),
@@ -333,10 +332,22 @@ export const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <div
+      style={{
+        padding: '24px',
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5',
+      }}
+    >
       {/* Header */}
       <Card style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Title level={2} style={{ margin: 0 }}>
             Панель адміністратора
           </Title>

@@ -110,26 +110,30 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                   >
                     <Input placeholder={`Варіант відповіді ${index + 1}`} />
                   </Form.Item>
-                  <Form.Item name="correct" valuePropName="checked" style={{ marginBottom: 0 }}>
-                    <Checkbox
-                      value={index}
-                      onChange={(e) => {
-                        const currentCorrect = form.getFieldValue('correct') || []
-                        if (e.target.checked) {
-                          form.setFieldsValue({
-                            correct: [...currentCorrect, index],
-                          })
-                        } else {
-                          form.setFieldsValue({
-                            correct: currentCorrect.filter((i: number) => i !== index),
-                          })
-                        }
+                  <div style={{ marginTop: 24 }}>
+                    <Form.Item shouldUpdate noStyle>
+                      {() => {
+                        const correctAnswers = form.getFieldValue('correct') || []
+                        return (
+                          <Checkbox
+                            checked={correctAnswers.includes(index)}
+                            onChange={(e) => {
+                              const currentCorrect = form.getFieldValue('correct') || []
+                              let newCorrect: number[]
+                              if (e.target.checked) {
+                                newCorrect = [...currentCorrect, index]
+                              } else {
+                                newCorrect = currentCorrect.filter((i: number) => i !== index)
+                              }
+                              form.setFieldsValue({ correct: newCorrect })
+                            }}
+                          >
+                            Правильна
+                          </Checkbox>
+                        )
                       }}
-                      checked={form.getFieldValue('correct')?.includes(index)}
-                    >
-                      Правильна
-                    </Checkbox>
-                  </Form.Item>
+                    </Form.Item>
+                  </div>
                 </Space>
               ))}
               {fields.length < 4 && (
@@ -152,6 +156,12 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
             </>
           )}
         </Form.List>
+
+        {/* Hidden Form.Item to properly manage the correct field */}
+        <Form.Item name="correct" style={{ display: 'none' }}>
+          <Input />
+        </Form.Item>
+
         <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
           Відмітьте одну або декілька правильних відповідей
         </Text>

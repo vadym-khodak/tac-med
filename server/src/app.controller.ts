@@ -15,11 +15,6 @@ export class AppController {
     return this.appService.getHello()
   }
 
-  @Get('api')
-  getApi(): { message: string } {
-    return { message: 'Hello, API' }
-  }
-
   @Get('health')
   async getHealth(): Promise<{
     status: string

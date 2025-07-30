@@ -15,10 +15,10 @@ export async function getNestjsApp() {
   app.useGlobalPipes(new ValidationPipe())
 
   // Enable CORS
-  const corsOrigin = process.env.ORIGIN_URL ? 
-    process.env.ORIGIN_URL.split(',').map(url => url.trim()) : 
-    true;
-  
+  const corsOrigin = process.env.ORIGIN_URL
+    ? process.env.ORIGIN_URL.split(',').map((url) => url.trim())
+    : true
+
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
@@ -33,7 +33,7 @@ async function bootstrap() {
   const app = await getNestjsApp()
 
   const port = process.env.PORT || 3000
-  await app.listen(port)
+  await app.listen(port, '0.0.0.0')
   console.log(`Server running on http://localhost:${port}`)
 }
 
