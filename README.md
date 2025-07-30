@@ -227,7 +227,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```
 
 4. **Access the application**
-   - Client application: http://localhost:80
+   - Client application: http://localhost:8080
    - Server API: http://localhost:3333
    - MongoDB: localhost:27018 (mapped from container's 27017)
 
