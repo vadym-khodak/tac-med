@@ -1,106 +1,27 @@
 # Tac Med
 
-A desktop application for tactical medicine knowledge testing based on the MARCH protocol. The application allows users to take tests, stores results in a local database, determines knowledge levels, and provides administrators with question management capabilities.
+A web-based application for tactical medicine knowledge testing based on the MARCH protocol. Built with React (frontend) and NestJS (backend), using MongoDB for data storage.
 
-## Features
+## Overview
 
-### User Mode
-- **Name Validation**: Full name input with Cyrillic validation (3 words, each starting with capital letter, minimum 3 characters each)
-- **MARCH Protocol Testing**: 6 blocks of 10 questions each (60 questions total)
-- **Timed Testing**: 20-minute countdown timer with automatic completion
-- **Interactive Questions**: Radio buttons for single answers, checkboxes for multiple answers
-- **Multiple Choice Indicator**: Visual hint "(Виберіть всі правильні відповіді)" for questions with multiple correct answers
-- **Question Navigation**: Previous/Next buttons to review and change answers before final submission
-- **Answer Persistence**: Selected answers are saved when navigating between questions
-- **Real-time Feedback**: Answer highlighting after saving (green for correct, red for incorrect)
-- **Knowledge Level Assessment**: 5 levels based on performance (Low, Beginner, Medium, High, Maximum)
-- **Results Display**: Detailed breakdown by blocks and overall performance with rounded percentages
+Tac Med is a knowledge assessment platform designed for tactical medicine training. It provides:
+- Timed tests with 60 questions across 6 MARCH protocol categories
+- Multi-language support (Ukrainian interface)
+- Admin dashboard for managing questions and viewing results
+- Support for multimedia questions (images and YouTube videos)
+- Detailed performance analytics and Excel export
 
-### Administrator Mode
-- **Password Protected Access**: Default password "12345" with change capability
-- **Results Management**: View all test results with filtering and sorting
-- **Excel Export**: Export results to Excel format
-- **Question Management**: Import questions via JSON format
-- **Media Support**: Add images (JPG) or YouTube videos to questions
-- **Question Browser**: View all questions with correct answers highlighted
-
-### Test Blocks
-1. **General Questions** (Загальні питання)
-2. **Massive Hemorrhage** (Масивна кровотеча)
-3. **Airway** (Дихальні шляхи)
-4. **Respiration** (Дихання)
-5. **Circulation** (Кровообіг)
-6. **Hypothermia/Head Injury** (Гіпотермія/травма голови)
-
-## Screenshots
-<img width="1487" height="1308" alt="image" src="https://github.com/user-attachments/assets/f37b5d8f-37a8-40b9-b9fe-c6bec210e3e8" />
-<img width="746" height="819" alt="image" src="https://github.com/user-attachments/assets/4bdc11e6-6a44-4a69-abbb-45aa0751d769" />
-<img width="1501" height="1017" alt="image" src="https://github.com/user-attachments/assets/a69b8910-d418-46e0-aa01-7973b00081d0" />
-<img width="1493" height="862" alt="image" src="https://github.com/user-attachments/assets/a0793fea-708c-4793-b6ef-872b1cb690c2" />
-<img width="1180" height="1314" alt="image" src="https://github.com/user-attachments/assets/18e0d768-df0f-4ace-9691-62dd10abd6c1" />
-<img width="1498" height="1136" alt="image" src="https://github.com/user-attachments/assets/b2beb68f-0b8b-4d8c-8d3d-5c3eb3b0f34c" />
-<img width="687" height="721" alt="image" src="https://github.com/user-attachments/assets/54aee59a-7b9e-45ed-bc2e-804afc05192c" />
-<img width="1498" height="679" alt="image" src="https://github.com/user-attachments/assets/a91f5ee3-0d7e-4fba-8204-31b3cd3bb64c" />
-<img width="1460" height="1179" alt="image" src="https://github.com/user-attachments/assets/40c9cb82-3977-4fa5-a32a-96f001138de8" />
+For detailed business requirements and screenshots, see [TECSPEC.md](TECSPEC.md).
 
 ## Tech Stack
 
-- **Platform**: Windows 7, 10, 11
-- **Language**: TypeScript
-- **Frontend**: React with Vite
-- **Backend**: NestJS with Express
-- **Database**: MongoDB (local)
-- **Image Format**: JPG (centered, adaptive size)
-- **Video Support**: YouTube integration
-
-## Knowledge Levels
-
-| Score Range | Level |
-|-------------|-------|
-| 0-20% | Low (Низький) |
-| 21-50% | Beginner (Початковий) |
-| 51-80% | Medium (Середній) |
-| 81-95% | High (Високий) |
-| 96-100% | Maximum (Максимальний) |
-
-## Database Schema
-
-### Questions Collection
-```json
-{
-  "id": "INTEGER (auto-increment)",
-  "block": "INTEGER (1-6)",
-  "question": "TEXT",
-  "answers": ["Answer A", "Answer B", "Answer C", "Answer D"],
-  "correct": [0, 2],
-  "image_path": "images/example.jpg",
-  "youtube_url": "https://youtu.be/example"
-}
-```
-
-### Results Collection
-```json
-{
-  "id": "INTEGER (primary key)",
-  "full_name": "Прізвище Ім'я По-батькові",
-  "test_date": "2025-07-25 10:30:00",
-  "block_scores": {"1": 80, "2": 60, "3": 100, "4": 70, "5": 50, "6": 90},
-  "total_score": 75.00,
-  "incorrect_list": ["Question text 1", "Question text 2"]
-}
-```
-
-## Scoring System
-
-- Each question worth 100%
-- Multiple correct answers split weight equally
-- Question considered correct if user scores ≥60% of question weight
-- No penalty for wrong answers, only positive scoring for correct ones
-
-**Example**:
-- Correct answers: [0, 1, 3] (each worth 33.3%)
-- User selects: [0, 1] → 66.6% → ✅ Correct
-- User selects: [1, 2] → 33.3% → ❌ Incorrect
+- **Frontend**: React 18 with TypeScript, Vite, Ant Design
+- **Backend**: NestJS with Express, TypeScript
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT-based with role management
+- **Build Tools**: Webpack (server), Vite (client)
+- **Code Quality**: Biome for linting and formatting
+- **Containerization**: Docker & Docker Compose
 
 ## Project Structure
 
@@ -242,7 +163,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    - Client application: http://localhost:4200
    - Server API: http://localhost:3000
    - MongoDB: localhost:27018 (mapped from container's 27017)
-   
+
    **Note**: By default, the application is only accessible from the local machine. To make it available on your local network, see the "Local Network Access" section below.
 
 6. **Stop the application**
@@ -292,19 +213,19 @@ To make the application accessible from other devices on your local network (e.g
    ```
 
 2. **Update configuration files**
-   
+
    For Docker setup, edit `docker-compose.yml`:
    ```yaml
    # Replace the hardcoded IPs with your local IP address
    ORIGIN_URL: http://YOUR_LOCAL_IP:4200
    VITE_API_URL: http://YOUR_LOCAL_IP:3000
    ```
-   
+
    For manual setup, create/update `.env` files:
    ```bash
    # server/.env
    ORIGIN_URL=http://YOUR_LOCAL_IP:4200
-   
+
    # client/.env
    VITE_API_URL=http://YOUR_LOCAL_IP:3000
    ```
@@ -314,10 +235,10 @@ To make the application accessible from other devices on your local network (e.g
    # Allow ports for the application
    sudo ufw allow 3000/tcp
    sudo ufw allow 4200/tcp
-   
+
    # If using Docker, also allow MongoDB port
    sudo ufw allow 27018/tcp
-   
+
    # Check firewall status
    sudo ufw status
    ```
@@ -327,7 +248,7 @@ To make the application accessible from other devices on your local network (e.g
    # For Docker
    docker-compose down
    docker-compose up --build
-   
+
    # For manual setup
    # Restart both server and client
    ```
@@ -341,10 +262,10 @@ To make the application accessible from other devices on your local network (e.g
    ```bash
    # Method 1: Using ifconfig
    ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}'
-   
+
    # Method 2: Using System Preferences
    # Go to System Preferences → Network → Select your active connection → IP address is shown
-   
+
    # Method 3: For specific interface (e.g., Wi-Fi)
    ipconfig getifaddr en0  # For Wi-Fi
    ipconfig getifaddr en1  # For Ethernet (may vary)
@@ -356,12 +277,12 @@ To make the application accessible from other devices on your local network (e.g
    ```bash
    # macOS firewall is usually configured through System Preferences
    # Go to: System Preferences → Security & Privacy → Firewall
-   
+
    # Or use command line (requires admin privileges)
    # Add Node.js to firewall exceptions
    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/node
    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp /usr/local/bin/node
-   
+
    # If using specific Node version via nvm, adjust the path accordingly
    # Example: ~/.nvm/versions/node/v20.0.0/bin/node
    ```
@@ -370,7 +291,7 @@ To make the application accessible from other devices on your local network (e.g
    ```bash
    # Turn off firewall
    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
-   
+
    # Remember to turn it back on after testing
    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
    ```
@@ -386,12 +307,12 @@ To make the application accessible from other devices on your local network (e.g
    ```powershell
    # Method 1: Using ipconfig
    ipconfig | findstr /i "IPv4"
-   
+
    # Method 2: Using PowerShell
    (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Wi-Fi).IPAddress
    # or for Ethernet
    (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
-   
+
    # Method 3: Using GUI
    # Settings → Network & Internet → Properties → IPv4 address
    ```
@@ -399,20 +320,20 @@ To make the application accessible from other devices on your local network (e.g
 2. **Update configuration files** (same as Linux step 2)
 
 3. **Configure Windows Firewall**
-   
+
    Using PowerShell (Run as Administrator):
    ```powershell
    # Add inbound rules for the application ports
    New-NetFirewallRule -DisplayName "Tac-Med Server" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
    New-NetFirewallRule -DisplayName "Tac-Med Client" -Direction Inbound -Protocol TCP -LocalPort 4200 -Action Allow
-   
+
    # If using Docker, also allow MongoDB port
    New-NetFirewallRule -DisplayName "Tac-Med MongoDB" -Direction Inbound -Protocol TCP -LocalPort 27018 -Action Allow
-   
+
    # Check if rules were created
    Get-NetFirewallRule -DisplayName "Tac-Med*"
    ```
-   
+
    Or using Windows Defender Firewall GUI:
    1. Open Windows Defender Firewall with Advanced Security
    2. Click "Inbound Rules" → "New Rule"
@@ -426,7 +347,7 @@ To make the application accessible from other devices on your local network (e.g
    # For Docker
    docker-compose down
    docker-compose up --build
-   
+
    # For manual setup
    # Stop running processes (Ctrl+C) and restart
    npm run start
@@ -698,19 +619,20 @@ For development/testing, you can configure the application to listen on all netw
 
    The server will run on http://localhost:3000 and the client on http://localhost:4200
 
-### Initial Setup
+## Initial Setup
 
-1. **Import test questions** (required for first run)
-   - Navigate to http://localhost:4200
-   - Click "Увійти як адміністратор" (Login as administrator)
-   - Use default password: `12345`
-   - Go to "Імпортувати питання" (Import questions)
-   - Upload the `comprehensive-questions.json` file from the project root
+1. **Database Initialization**
+   - MongoDB will automatically create the database on first connection
+   - Default admin password: `12345`
 
-2. **Test the application**
-   - Return to main menu
-   - Enter your full name in Cyrillic (e.g., "Чернобай Степан Бандерович")
-   - Click "Розпочати тестування" to start the test
+2. **Import Test Questions**
+   - Login as administrator
+   - Navigate to question management
+   - Import `comprehensive-questions.json` from project root
+
+3. **Environment Variables**
+   - Copy `.env.sample` to `.env` in both server and client directories
+   - Update variables as needed for your environment
 
 ### Troubleshooting
 
@@ -736,21 +658,6 @@ For development/testing, you can configure the application to listen on all netw
   ```
 
 ### Common Issues
-
-#### Multiple Answer Selection Not Working
-- The test interface supports both single and multiple answer selection
-- Questions with multiple correct answers will show checkboxes
-- Questions with single correct answer will show radio buttons
-- A visual hint "(Виберіть всі правильні відповіді)" appears for multiple-choice questions
-
-#### Answers Not Persisting Between Questions
-- Answers are automatically saved when you click "Зберегти відповідь"
-- You can navigate between questions using "Попереднє питання" and "Наступне питання" buttons
-- Your selections will be maintained as you navigate
-
-#### Percentage Display Issues
-- All percentages are rounded to whole numbers (no decimal places)
-- This applies to both the admin dashboard and test results
 
 #### Docker Network Issues
 - If you see connection errors, ensure the IP addresses in docker-compose.yml match your setup
