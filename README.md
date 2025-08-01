@@ -9,9 +9,12 @@ A desktop application for tactical medicine knowledge testing based on the MARCH
 - **MARCH Protocol Testing**: 6 blocks of 10 questions each (60 questions total)
 - **Timed Testing**: 20-minute countdown timer with automatic completion
 - **Interactive Questions**: Radio buttons for single answers, checkboxes for multiple answers
-- **Real-time Feedback**: Answer highlighting (green for correct, red for incorrect)
+- **Multiple Choice Indicator**: Visual hint "(Виберіть всі правильні відповіді)" for questions with multiple correct answers
+- **Question Navigation**: Previous/Next buttons to review and change answers before final submission
+- **Answer Persistence**: Selected answers are saved when navigating between questions
+- **Real-time Feedback**: Answer highlighting after saving (green for correct, red for incorrect)
 - **Knowledge Level Assessment**: 5 levels based on performance (Low, Beginner, Medium, High, Maximum)
-- **Results Display**: Detailed breakdown by blocks and overall performance
+- **Results Display**: Detailed breakdown by blocks and overall performance with rounded percentages
 
 ### Administrator Mode
 - **Password Protected Access**: Default password "12345" with change capability
@@ -111,7 +114,7 @@ This is a Node.js project with two separate applications:
 
 ### Prerequisites
 
-- Node.js v23 (required)
+- Node.js v18 or higher (recommended: v20+)
 - npm or yarn
 - MongoDB (local installation)
 
@@ -217,7 +220,16 @@ Docker Compose provides the easiest way to run the application with all dependen
    # Edit .env file with your configurations (if needed)
    ```
 
-3. **Build and run with Docker Compose**
+3. **Configure environment (if needed)**
+   ```bash
+   # The docker-compose.yml contains hardcoded IP addresses (192.168.88.87)
+   # You may need to update these to match your local network or use localhost
+   # Edit docker-compose.yml and replace:
+   # - ORIGIN_URL=http://192.168.88.87:4200 → ORIGIN_URL=http://localhost:4200
+   # - VITE_API_URL=http://192.168.88.87:3000 → VITE_API_URL=http://localhost:3000
+   ```
+
+4. **Build and run with Docker Compose**
    ```bash
    # Build and start all services
    docker-compose up --build
@@ -226,12 +238,14 @@ Docker Compose provides the easiest way to run the application with all dependen
    docker-compose up -d --build
    ```
 
-4. **Access the application**
-   - Client application: http://localhost:8080
+5. **Access the application**
+   - Client application: http://localhost:4200
    - Server API: http://localhost:3000
    - MongoDB: localhost:27018 (mapped from container's 27017)
+   
+   **Note**: By default, the application is only accessible from the local machine. To make it available on your local network, see the "Local Network Access" section below.
 
-5. **Stop the application**
+6. **Stop the application**
    ```bash
    # Stop all services
    docker-compose down
@@ -263,6 +277,212 @@ docker-compose exec mongo mongosh
 # Rebuild without cache
 docker-compose build --no-cache
 ```
+
+### Local Network Access
+
+To make the application accessible from other devices on your local network (e.g., for testing on different computers or mobile devices), follow these platform-specific instructions:
+
+#### Linux
+
+1. **Get your local IP address**
+   ```bash
+   hostname -I | awk '{print $1}'
+   # or
+   ip addr show | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
+   ```
+
+2. **Update configuration files**
+   
+   For Docker setup, edit `docker-compose.yml`:
+   ```yaml
+   # Replace the hardcoded IPs with your local IP address
+   ORIGIN_URL: http://YOUR_LOCAL_IP:4200
+   VITE_API_URL: http://YOUR_LOCAL_IP:3000
+   ```
+   
+   For manual setup, create/update `.env` files:
+   ```bash
+   # server/.env
+   ORIGIN_URL=http://YOUR_LOCAL_IP:4200
+   
+   # client/.env
+   VITE_API_URL=http://YOUR_LOCAL_IP:3000
+   ```
+
+3. **Configure firewall (if using UFW)**
+   ```bash
+   # Allow ports for the application
+   sudo ufw allow 3000/tcp
+   sudo ufw allow 4200/tcp
+   
+   # If using Docker, also allow MongoDB port
+   sudo ufw allow 27018/tcp
+   
+   # Check firewall status
+   sudo ufw status
+   ```
+
+4. **Restart the application**
+   ```bash
+   # For Docker
+   docker-compose down
+   docker-compose up --build
+   
+   # For manual setup
+   # Restart both server and client
+   ```
+
+5. **Access from other devices**
+   - Use `http://YOUR_LOCAL_IP:4200` from any device on the same network
+
+#### macOS
+
+1. **Get your local IP address**
+   ```bash
+   # Method 1: Using ifconfig
+   ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}'
+   
+   # Method 2: Using System Preferences
+   # Go to System Preferences → Network → Select your active connection → IP address is shown
+   
+   # Method 3: For specific interface (e.g., Wi-Fi)
+   ipconfig getifaddr en0  # For Wi-Fi
+   ipconfig getifaddr en1  # For Ethernet (may vary)
+   ```
+
+2. **Update configuration files** (same as Linux step 2)
+
+3. **Configure macOS Firewall**
+   ```bash
+   # macOS firewall is usually configured through System Preferences
+   # Go to: System Preferences → Security & Privacy → Firewall
+   
+   # Or use command line (requires admin privileges)
+   # Add Node.js to firewall exceptions
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/node
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp /usr/local/bin/node
+   
+   # If using specific Node version via nvm, adjust the path accordingly
+   # Example: ~/.nvm/versions/node/v20.0.0/bin/node
+   ```
+
+4. **Alternative: Disable firewall temporarily (for testing only)**
+   ```bash
+   # Turn off firewall
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+   
+   # Remember to turn it back on after testing
+   sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+   ```
+
+5. **Restart the application** (same as Linux step 4)
+
+6. **Access from other devices**
+   - Use `http://YOUR_LOCAL_IP:4200` from any device on the same network
+
+#### Windows
+
+1. **Get your local IP address**
+   ```powershell
+   # Method 1: Using ipconfig
+   ipconfig | findstr /i "IPv4"
+   
+   # Method 2: Using PowerShell
+   (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Wi-Fi).IPAddress
+   # or for Ethernet
+   (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
+   
+   # Method 3: Using GUI
+   # Settings → Network & Internet → Properties → IPv4 address
+   ```
+
+2. **Update configuration files** (same as Linux step 2)
+
+3. **Configure Windows Firewall**
+   
+   Using PowerShell (Run as Administrator):
+   ```powershell
+   # Add inbound rules for the application ports
+   New-NetFirewallRule -DisplayName "Tac-Med Server" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+   New-NetFirewallRule -DisplayName "Tac-Med Client" -Direction Inbound -Protocol TCP -LocalPort 4200 -Action Allow
+   
+   # If using Docker, also allow MongoDB port
+   New-NetFirewallRule -DisplayName "Tac-Med MongoDB" -Direction Inbound -Protocol TCP -LocalPort 27018 -Action Allow
+   
+   # Check if rules were created
+   Get-NetFirewallRule -DisplayName "Tac-Med*"
+   ```
+   
+   Or using Windows Defender Firewall GUI:
+   1. Open Windows Defender Firewall with Advanced Security
+   2. Click "Inbound Rules" → "New Rule"
+   3. Select "Port" → "TCP" → Enter port numbers (3000, 4200, 27018)
+   4. Select "Allow the connection"
+   5. Apply to all profiles (Domain, Private, Public)
+   6. Give it a name (e.g., "Tac-Med Server")
+
+4. **Restart the application**
+   ```powershell
+   # For Docker
+   docker-compose down
+   docker-compose up --build
+   
+   # For manual setup
+   # Stop running processes (Ctrl+C) and restart
+   npm run start
+   ```
+
+5. **Access from other devices**
+   - Use `http://YOUR_LOCAL_IP:4200` from any device on the same network
+
+#### Important Security Notes
+
+1. **Firewall Rules**: The firewall rules above open ports to all network interfaces. For better security, you can restrict access to specific network interfaces or IP ranges.
+
+2. **Production Environment**: These instructions are for development/testing. For production deployment, use proper security measures including:
+   - HTTPS/SSL certificates
+   - Reverse proxy (nginx/Apache)
+   - Restricted firewall rules
+   - Environment-specific configurations
+
+3. **Temporary Access**: If you only need temporary access, remember to:
+   - Remove or disable firewall rules when done
+   - Revert configuration changes
+   - Use localhost bindings for development
+
+### Quick Setup - Bind to All Interfaces
+
+For development/testing, you can configure the application to listen on all network interfaces without specifying IP addresses:
+
+**Warning**: This method is less secure and should only be used in trusted networks.
+
+1. **For Docker setup**, modify `docker-compose.yml`:
+   ```yaml
+   # Change these lines
+   ORIGIN_URL: http://0.0.0.0:4200
+   VITE_API_URL: http://0.0.0.0:3000
+   ```
+
+2. **For manual setup**, you may need to modify the server configuration to bind to `0.0.0.0` instead of `localhost`.
+
+3. **Then access the application** using your machine's IP address from any device on the network.
+
+### Troubleshooting Network Access
+
+1. **Connection Refused**
+   - Verify the IP address is correct
+   - Check if the application is running
+   - Ensure firewall rules are properly configured
+   - Try disabling firewall temporarily to isolate the issue
+
+2. **Cannot Find Server**
+   - Ensure both devices are on the same network
+   - Check if the IP address hasn't changed (dynamic IP)
+   - Verify no VPN is interfering with local network access
+
+3. **Port Already in Use**
+   - Another application might be using the ports
+   - Check with `netstat -tulnp` (Linux), `lsof -i :PORT` (macOS), or `netstat -an` (Windows)
 
 ### Troubleshooting Docker
 
@@ -317,15 +537,15 @@ docker-compose build --no-cache
    cd tac-med
    ```
 
-2. **Install Node.js v23**
+2. **Install Node.js**
    ```bash
-   # Using Homebrew
-   brew install node@23
+   # Using Homebrew (installs latest LTS)
+   brew install node
 
-   # Or using Node Version Manager (nvm)
+   # Or using Node Version Manager (nvm) - recommended
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-   nvm install 23
-   nvm use 23
+   nvm install --lts
+   nvm use --lts
    ```
 
 3. **Install and run MongoDB locally**
@@ -370,17 +590,17 @@ docker-compose build --no-cache
    cd tac-med
    ```
 
-2. **Install Node.js v23**
+2. **Install Node.js**
    ```bash
-   # Using NodeSource repository
-   curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
+   # Using NodeSource repository (LTS version)
+   curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
    sudo apt-get install -y nodejs
 
-   # Or using Node Version Manager (nvm)
+   # Or using Node Version Manager (nvm) - recommended
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
    source ~/.bashrc
-   nvm install 23
-   nvm use 23
+   nvm install --lts
+   nvm use --lts
    ```
 
 3. **Install and run MongoDB locally**
@@ -432,13 +652,13 @@ docker-compose build --no-cache
    cd tac-med
    ```
 
-2. **Install Node.js v23**
-   - Download Node.js v23 from [https://nodejs.org/en/download/prebuilt-installer](https://nodejs.org/en/download/prebuilt-installer)
-   - Select version 23.x.x for Windows
+2. **Install Node.js**
+   - Download Node.js LTS from [https://nodejs.org/](https://nodejs.org/)
+   - Choose the LTS version (recommended)
    - Run the installer and follow the installation wizard
    - Verify installation:
      ```powershell
-     node --version
+     node --version  # Should show v18.0.0 or higher
      npm --version
      ```
 
@@ -500,8 +720,8 @@ docker-compose build --no-cache
 - Ensure MongoDB is listening on default port 27017
 
 #### Node.js Version Issues
-- Ensure you're using Node.js v23 by running `node --version`
-- If using nvm, set default version: `nvm alias default 23`
+- Ensure you're using Node.js v18 or higher by running `node --version`
+- If using nvm, set default version: `nvm alias default lts/*`
 
 #### Port Already in Use
 - If port 3000 or 4200 is already in use:
@@ -515,6 +735,32 @@ docker-compose build --no-cache
   taskkill /PID <PID> /F
   ```
 
+### Common Issues
+
+#### Multiple Answer Selection Not Working
+- The test interface supports both single and multiple answer selection
+- Questions with multiple correct answers will show checkboxes
+- Questions with single correct answer will show radio buttons
+- A visual hint "(Виберіть всі правильні відповіді)" appears for multiple-choice questions
+
+#### Answers Not Persisting Between Questions
+- Answers are automatically saved when you click "Зберегти відповідь"
+- You can navigate between questions using "Попереднє питання" and "Наступне питання" buttons
+- Your selections will be maintained as you navigate
+
+#### Percentage Display Issues
+- All percentages are rounded to whole numbers (no decimal places)
+- This applies to both the admin dashboard and test results
+
+#### Docker Network Issues
+- If you see connection errors, ensure the IP addresses in docker-compose.yml match your setup
+- Replace hardcoded IPs (192.168.88.87) with localhost for local development
+- Restart Docker containers after making changes to docker-compose.yml
+
+#### Build Errors
+- Clear npm cache: `npm cache clean --force`
+- Delete node_modules and reinstall: `rm -rf node_modules && npm install`
+- Ensure all services are stopped before rebuilding
 
 ## Development Guidelines
 
