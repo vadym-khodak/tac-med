@@ -12,7 +12,9 @@
       "Bash(mv:*)",
       "Bash(cp:*)",
       "Bash(npm run build:*)",
-      "Bash(docker build:*)"
+      "Bash(docker build:*)",
+      "Bash(npm run lint)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

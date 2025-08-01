@@ -134,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
       'Блок 4': `${Math.round((result.block_scores['4'] || 0) / 10)} з 10`,
       'Блок 5': `${Math.round((result.block_scores['5'] || 0) / 10)} з 10`,
       'Блок 6': `${Math.round((result.block_scores['6'] || 0) / 10)} з 10`,
-      'Загальний результат': `${Object.values(result.block_scores).reduce((sum, score) => sum + Math.round(score / 10), 0)} з 60 (${result.total_score}%)`,
+      'Загальний результат': `${Object.values(result.block_scores).reduce((sum, score) => sum + Math.round(score / 10), 0)} з 60 (${Math.round(result.total_score)}%)`,
     }))
 
     const ws = XLSX.utils.json_to_sheet(exportData)
@@ -241,7 +241,7 @@ export const AdminDashboard: React.FC = () => {
           (sum, score) => sum + Math.round(score / 10),
           0,
         )
-        return `${total} з 60 (${record.total_score}%)`
+        return `${total} з 60 (${Math.round(record.total_score)}%)`
       },
       width: 150,
     },

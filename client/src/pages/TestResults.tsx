@@ -170,12 +170,12 @@ export const TestResults: React.FC = () => {
                 </Text>
                 <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
                   <Text style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: '#1890ff' }}>
-                    {typedResult.total_score}%
+                    {Math.round(typedResult.total_score)}%
                   </Text>
                   <Progress
-                    percent={typedResult.total_score}
+                    percent={Math.round(typedResult.total_score)}
                     size="small"
-                    status={typedResult.total_score >= 60 ? 'success' : 'exception'}
+                    status={Math.round(typedResult.total_score) >= 60 ? 'success' : 'exception'}
                     style={{ width: isMobile ? '100%' : '200px', marginTop: '4px' }}
                   />
                 </div>
