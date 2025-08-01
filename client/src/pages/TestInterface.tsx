@@ -104,11 +104,25 @@ export const TestInterface: React.FC = () => {
     setAnswerSaved(true)
   }
 
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      const prevIndex = currentQuestionIndex - 1
+      setCurrentQuestionIndex(prevIndex)
+      // Load previously saved answers for the previous question
+      const savedAnswers = answers[prevIndex].selected_answers
+      setSelectedAnswers(savedAnswers)
+      setAnswerSaved(savedAnswers.length > 0)
+    }
+  }
+
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1)
-      setSelectedAnswers([])
-      setAnswerSaved(false)
+      const nextIndex = currentQuestionIndex + 1
+      setCurrentQuestionIndex(nextIndex)
+      // Load previously saved answers for the next question
+      const savedAnswers = answers[nextIndex].selected_answers
+      setSelectedAnswers(savedAnswers)
+      setAnswerSaved(savedAnswers.length > 0)
     } else {
       submitTest()
     }
@@ -314,6 +328,14 @@ export const TestInterface: React.FC = () => {
           {currentQuestion.question}
         </Title>
 
+        {isMultipleChoice && (
+          <div style={{ marginBottom: 16 }}>
+            <Text type="secondary">
+              (Виберіть всі правильні відповіді)
+            </Text>
+          </div>
+        )}
+
         {isMultipleChoice ? (
           <Checkbox.Group
             value={selectedAnswers}
@@ -398,6 +420,15 @@ export const TestInterface: React.FC = () => {
 
         <div style={{ marginTop: 32, textAlign: 'center' }}>
           <Space size="large">
+            {currentQuestionIndex > 0 && (
+              <Button
+                type="default"
+                size="large"
+                onClick={handlePreviousQuestion}
+              >
+                Попереднє питання
+              </Button>
+            )}
             <Button
               type="primary"
               size="large"
