@@ -94,7 +94,7 @@ A desktop application for tactical medicine knowledge testing based on the MARCH
 - Question considered correct if user scores ≥60% of question weight
 - No penalty for wrong answers, only positive scoring for correct ones
 
-**Example**: 
+**Example**:
 - Correct answers: [0, 1, 3] (each worth 33.3%)
 - User selects: [0, 1] → 66.6% → ✅ Correct
 - User selects: [1, 2] → 33.3% → ❌ Incorrect
@@ -144,20 +144,20 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```bash
    # Update package index
    sudo apt-get update
-   
+
    # Install dependencies
    sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-   
+
    # Add Docker's official GPG key
    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-   
+
    # Add Docker repository
    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-   
+
    # Install Docker Engine
    sudo apt-get update
    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-   
+
    # Add your user to docker group (to run without sudo)
    sudo usermod -aG docker $USER
    newgrp docker
@@ -167,7 +167,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```bash
    # Download Docker Compose
    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-   
+
    # Apply executable permissions
    sudo chmod +x /usr/local/bin/docker-compose
    ```
@@ -191,7 +191,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```powershell
    # Run PowerShell as Administrator
    wsl --install
-   
+
    # Restart your computer
    ```
 
@@ -213,7 +213,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```bash
    # Copy the example environment file
    cp .env.example .env
-   
+
    # Edit .env file with your configurations (if needed)
    ```
 
@@ -221,7 +221,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```bash
    # Build and start all services
    docker-compose up --build
-   
+
    # Or run in detached mode (background)
    docker-compose up -d --build
    ```
@@ -235,7 +235,7 @@ Docker Compose provides the easiest way to run the application with all dependen
    ```bash
    # Stop all services
    docker-compose down
-   
+
    # Stop and remove volumes (includes database data)
    docker-compose down -v
    ```
@@ -272,7 +272,7 @@ docker-compose build --no-cache
    # macOS/Linux
    lsof -i :3000
    lsof -i :80
-   
+
    # Windows
    netstat -ano | findstr :3000
    netstat -ano | findstr :80
@@ -282,7 +282,7 @@ docker-compose build --no-cache
    ```bash
    # Add user to docker group
    sudo usermod -aG docker $USER
-   
+
    # Log out and back in, or run
    newgrp docker
    ```
@@ -296,13 +296,13 @@ docker-compose build --no-cache
    ```bash
    # Remove all stopped containers
    docker container prune
-   
+
    # Remove all unused images
    docker image prune -a
-   
+
    # Remove all unused volumes
    docker volume prune
-   
+
    # Remove everything (careful!)
    docker system prune -a --volumes
    ```
@@ -321,7 +321,7 @@ docker-compose build --no-cache
    ```bash
    # Using Homebrew
    brew install node@23
-   
+
    # Or using Node Version Manager (nvm)
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
    nvm install 23
@@ -333,10 +333,10 @@ docker-compose build --no-cache
    # Install MongoDB using Homebrew
    brew tap mongodb/brew
    brew install mongodb-community@7.0
-   
+
    # Start MongoDB service
    brew services start mongodb-community@7.0
-   
+
    # Verify MongoDB is running
    mongosh --eval "db.version()"
    ```
@@ -349,12 +349,13 @@ docker-compose build --no-cache
 5. **Run the application**
    ```bash
    # Run both server and client concurrently
-   npm start
-   
+   npm run build
+   npm run start
+
    # Or run individually:
    # Terminal 1 - Start the backend server
    npm run start:server
-   
+
    # Terminal 2 - Start the frontend client
    npm run start:client
    ```
@@ -374,7 +375,7 @@ docker-compose build --no-cache
    # Using NodeSource repository
    curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
    sudo apt-get install -y nodejs
-   
+
    # Or using Node Version Manager (nvm)
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
    source ~/.bashrc
@@ -386,18 +387,18 @@ docker-compose build --no-cache
    ```bash
    # Import MongoDB public key
    curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
-   
+
    # Add MongoDB repository
    echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-   
+
    # Update packages and install MongoDB
    sudo apt-get update
    sudo apt-get install -y mongodb-org
-   
+
    # Start MongoDB service
    sudo systemctl start mongod
    sudo systemctl enable mongod
-   
+
    # Verify MongoDB is running
    mongosh --eval "db.version()"
    ```
@@ -410,12 +411,13 @@ docker-compose build --no-cache
 5. **Run the application**
    ```bash
    # Run both server and client concurrently
-   npm start
-   
+   npm run build
+   npm run start
+
    # Or run individually:
    # Terminal 1 - Start the backend server
    npm run start:server
-   
+
    # Terminal 2 - Start the frontend client
    npm run start:client
    ```
@@ -462,11 +464,16 @@ docker-compose build --no-cache
 
 5. **Run the application**
    ```powershell
-   # In PowerShell terminal 1 - Start the backend server
-   nx serve server
-   
-   # In PowerShell terminal 2 - Start the frontend client
-   nx serve client
+   # Run both server and client concurrently
+   npm run build
+   npm run start
+
+   # Or run individually:
+   # Terminal 1 - Start the backend server
+   npm run start:server
+
+   # Terminal 2 - Start the frontend client
+   npm run start:client
    ```
 
    The server will run on http://localhost:3000 and the client on http://localhost:4200
@@ -502,7 +509,7 @@ docker-compose build --no-cache
   # Kill process on port (macOS/Linux)
   lsof -ti:3000 | xargs kill -9
   lsof -ti:4200 | xargs kill -9
-  
+
   # Windows
   netstat -ano | findstr :3000
   taskkill /PID <PID> /F
