@@ -62,6 +62,7 @@ export const AdminDashboard: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 576)
   const [changePasswordForm] = Form.useForm()
+  const [pageSize, setPageSize] = useState(10)
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
@@ -547,10 +548,13 @@ export const AdminDashboard: React.FC = () => {
               rowKey="_id"
               scroll={{ x: 800 }}
               pagination={{
-                pageSize: 10,
+                pageSize,
                 showSizeChanger: true,
                 showQuickJumper: true,
                 showTotal: (total) => `Всього ${total} питань`,
+                onShowSizeChange: (current, size) => {
+                  setPageSize(size)
+                },
               }}
               expandable={{
                 expandedRowRender: (record) => (
