@@ -23,8 +23,19 @@ export class QuestionsController {
   }
 
   @Get()
-  findAll() {
-    return this.questionsService.findAll()
+  findAll(@Query('page') page?: string, @Query('pageSize') pageSize?: string) {
+    const pageNum = page ? Number(page) : 1
+    const pageSizeNum = pageSize ? Number(pageSize) : 10
+    
+    if (Number.isNaN(pageNum) || pageNum < 1) {
+      throw new BadRequestException('Page must be a positive number')
+    }
+    
+    if (Number.isNaN(pageSizeNum) || pageSizeNum < 1) {
+      throw new BadRequestException('Page size must be a positive number')
+    }
+    
+    return this.questionsService.findAll(pageNum, pageSizeNum)
   }
 
   @Get('by-block/:block')

@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   Post,
+  Query,
   UnauthorizedException,
 } from '@nestjs/common'
 import { QuestionsService } from '../questions/questions.service'
@@ -22,8 +23,7 @@ export class AdminController {
   @Post('login')
   async login(@Body() loginData: { password: string }) {
     const { password } = loginData
-    console.log(password)
-
+    
     if (!password) {
       throw new BadRequestException('Password is required')
     }
@@ -87,14 +87,25 @@ export class AdminController {
   }
 
   @Get('questions')
-  async getAllQuestions(@Headers('authorization') authorization: string) {
+  async getAllQuestions(@Headers('authorization') authorization: string, @Query('page') page?: string, @Query('pageSize') pageSize?: string) {
     const token = this.extractToken(authorization)
 
     if (!this.adminService.validateAdminToken(token)) {
       throw new UnauthorizedException('Invalid or expired admin token')
     }
 
-    return this.questionsService.findAll()
+    const pageNum = page ? Number(page) : 1
+    const pageSizeNum = pageSize ? Number(pageSize) : 10
+
+    if (Number.isNaN(pageNum) || pageNum < 1) {
+      throw new BadRequestException('Page must be a positive number')
+    }
+
+    if (Number.isNaN(pageSizeNum) || pageSizeNum < 1) {
+      throw new BadRequestException('Page size must be a positive number')
+    }
+
+    return this.questionsService.findAll(pageNum, pageSizeNum)
   }
 
   private extractToken(authorization: string): string {
