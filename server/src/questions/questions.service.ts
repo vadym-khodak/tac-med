@@ -110,6 +110,10 @@ export class QuestionsService {
     return counts
   }
 
+  async exportAll(): Promise<Question[]> {
+    return this.questionModel.find().sort({ block: 1 }).exec()
+  }
+
   private validateQuestion(question: CreateQuestionDto): void {
     // Validate block
     if (question.block < 1 || question.block > 6) {

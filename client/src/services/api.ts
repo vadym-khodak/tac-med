@@ -192,6 +192,13 @@ export const adminApi = {
     })
     return response.data
   },
+
+  exportAllQuestions: async (token: string): Promise<Question[]> => {
+    const response = await api.get('/admin/questions/export', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  },
 }
 
 export const healthApi = {

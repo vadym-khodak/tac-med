@@ -175,6 +175,28 @@ export const AdminDashboard: React.FC = () => {
     XLSX.writeFile(wb, 'tactical-medicine-results.xlsx')
   }
 
+  const handleExportQuestions = async () => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+
+    try {
+      const allQuestions = await adminApi.exportAllQuestions(token)
+      const dataStr = JSON.stringify(allQuestions, null, 2)
+      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`
+      
+      const exportFileDefaultName = `questions-export-${new Date().toISOString().split('T')[0]}.json`
+      
+      const linkElement = document.createElement('a')
+      linkElement.setAttribute('href', dataUri)
+      linkElement.setAttribute('download', exportFileDefaultName)
+      linkElement.click()
+      
+      message.success(`Експортовано ${allQuestions.length} питань`)
+    } catch (_error) {
+      message.error('Помилка експорту питань')
+    }
+  }
+
   const handleImportQuestions = async (file: File) => {
     const token = localStorage.getItem('adminToken')
     if (!token) return false
@@ -571,6 +593,13 @@ export const AdminDashboard: React.FC = () => {
                   onClick={() => setImportModal(true)}
                 >
                   Імпорт питань
+                </Button>
+                <Button
+                  type="default"
+                  icon={<DownloadOutlined />}
+                  onClick={handleExportQuestions}
+                >
+                  Експорт питань
                 </Button>
               </Space>
             }

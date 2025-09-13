@@ -330,9 +330,7 @@ export const TestInterface: React.FC = () => {
 
         {isMultipleChoice && (
           <div style={{ marginBottom: 16 }}>
-            <Text type="secondary">
-              (Виберіть всі правильні відповіді)
-            </Text>
+            <Text type="secondary">(Виберіть всі правильні відповіді)</Text>
           </div>
         )}
 
@@ -421,11 +419,7 @@ export const TestInterface: React.FC = () => {
         <div style={{ marginTop: 32, textAlign: 'center' }}>
           <Space size="large">
             {currentQuestionIndex > 0 && (
-              <Button
-                type="default"
-                size="large"
-                onClick={handlePreviousQuestion}
-              >
+              <Button type="default" size="large" onClick={handlePreviousQuestion}>
                 Попереднє питання
               </Button>
             )}
