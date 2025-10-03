@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { AdminStats, Question, QuestionCount, TestAnswer, TestResult } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 if (!API_URL) {
   console.error('VITE_API_URL environment variable is not set')
@@ -40,8 +40,22 @@ export const questionsApi = {
     return response.data
   },
 
-  getAll: async (): Promise<Question[]> => {
-    const response = await api.get('/questions')
+  getAll: async (page?: number, pageSize?: number): Promise<{
+    data: Question[]
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+  }> => {
+    const params: Record<string, number> = {}
+    if (page !== undefined) {
+      params.page = page
+    }
+    if (pageSize !== undefined) {
+      params.pageSize = pageSize
+    }
+    
+    const response = await api.get('/questions', { params })
     return response.data
   },
 
@@ -153,8 +167,34 @@ export const adminApi = {
     return response.data
   },
 
-  getAllQuestions: async (token: string): Promise<Question[]> => {
+  getAllQuestions: async (
+    token: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<{
+    data: Question[]
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+  }> => {
+    const params: Record<string, number> = {}
+    if (page !== undefined) {
+      params.page = page
+    }
+    if (pageSize !== undefined) {
+      params.pageSize = pageSize
+    }
+    
     const response = await api.get('/admin/questions', {
+      params,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  },
+
+  exportAllQuestions: async (token: string): Promise<Question[]> => {
+    const response = await api.get('/admin/questions/export', {
       headers: { Authorization: `Bearer ${token}` },
     })
     return response.data

@@ -14,8 +14,24 @@ export class QuestionsService {
     return createdQuestion.save()
   }
 
-  async findAll(): Promise<Question[]> {
-    return this.questionModel.find().exec()
+  async findAll(page = 1, pageSize = 10): Promise<{
+    data: Question[]
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+  }> {
+    const skip = (page - 1) * pageSize
+    const total = await this.questionModel.countDocuments()
+    const data = await this.questionModel.find().skip(skip).limit(pageSize).exec()
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    }
   }
 
   async findByBlock(block: number): Promise<Question[]> {
@@ -92,6 +108,10 @@ export class QuestionsService {
     }
 
     return counts
+  }
+
+  async exportAll(): Promise<Question[]> {
+    return this.questionModel.find().sort({ block: 1 }).exec()
   }
 
   private validateQuestion(question: CreateQuestionDto): void {

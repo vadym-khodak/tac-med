@@ -55,6 +55,8 @@ export const AdminDashboard: React.FC = () => {
   const [questionsCount, setQuestionsCount] = useState<QuestionCount>({})
   const [results, setResults] = useState<TestResult[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
+  const [questionsTotal, setQuestionsTotal] = useState(0)
+  const [questionsPage, setQuestionsPage] = useState(1)
   const [changePasswordModal, setChangePasswordModal] = useState(false)
   const [importModal, setImportModal] = useState(false)
   const [questionFormDrawer, setQuestionFormDrawer] = useState(false)
@@ -81,25 +83,54 @@ export const AdminDashboard: React.FC = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+  
+  useEffect(() => {
+    loadQuestions()
+  }, [questionsPage, pageSize])
 
-  const loadDashboardData = async (token: string) => {
+  const loadDashboardData = async (token: string, loadQuestions = true) => {
     try {
       setLoading(true)
-      const [dashboardData, resultsData, questionsData] = await Promise.all([
+      const promises: Promise<unknown>[] = [
         adminApi.getDashboard(token),
         adminApi.getAllResults(token),
-        adminApi.getAllQuestions(token),
-      ])
+      ]
+      
+      if (loadQuestions) {
+        promises.push(adminApi.getAllQuestions(token, questionsPage, pageSize))
+      }
+      
+      const results = await Promise.all(promises)
+      const dashboardData = results[0] as { statistics: AdminStats; questionsCount: QuestionCount }
+      const resultsData = results[1] as TestResult[]
+      const questionsData = results[2] as { data: Question[]; total: number } | undefined
 
       setStatistics(dashboardData.statistics)
       setQuestionsCount(dashboardData.questionsCount)
       setResults(resultsData)
-      setQuestions(questionsData)
+      
+      if (questionsData) {
+        setQuestions(questionsData.data)
+        setQuestionsTotal(questionsData.total)
+      }
     } catch (_error) {
       message.error('Помилка завантаження даних')
       navigate('/admin')
     } finally {
       setLoading(false)
+    }
+  }
+  
+  const loadQuestions = async () => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+    
+    try {
+      const questionsData = await adminApi.getAllQuestions(token, questionsPage, pageSize)
+      setQuestions(questionsData.data)
+      setQuestionsTotal(questionsData.total)
+    } catch (_error) {
+      message.error('Помилка завантаження питань')
     }
   }
 
@@ -144,6 +175,28 @@ export const AdminDashboard: React.FC = () => {
     XLSX.writeFile(wb, 'tactical-medicine-results.xlsx')
   }
 
+  const handleExportQuestions = async () => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+
+    try {
+      const allQuestions = await adminApi.exportAllQuestions(token)
+      const dataStr = JSON.stringify(allQuestions, null, 2)
+      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`
+      
+      const exportFileDefaultName = `questions-export-${new Date().toISOString().split('T')[0]}.json`
+      
+      const linkElement = document.createElement('a')
+      linkElement.setAttribute('href', dataUri)
+      linkElement.setAttribute('download', exportFileDefaultName)
+      linkElement.click()
+      
+      message.success(`Експортовано ${allQuestions.length} питань`)
+    } catch (_error) {
+      message.error('Помилка експорту питань')
+    }
+  }
+
   const handleImportQuestions = async (file: File) => {
     const token = localStorage.getItem('adminToken')
     if (!token) return false
@@ -156,7 +209,9 @@ export const AdminDashboard: React.FC = () => {
       message.success(`Успішно імпортовано ${questionsData.length} питань`)
 
       // Reload data
-      loadDashboardData(token)
+      loadDashboardData(token, false)
+      setQuestionsPage(1) // Reset to first page
+      loadQuestions()
       setImportModal(false)
 
       return false // Prevent default upload
@@ -184,7 +239,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       await questionsApi.delete(id, token)
       message.success('Питання видалено')
-      loadDashboardData(token)
+      loadQuestions() // Just reload questions, not everything
     } catch (_error) {
       message.error('Помилка видалення питання')
     }
@@ -204,7 +259,7 @@ export const AdminDashboard: React.FC = () => {
         message.success('Питання додано')
       }
       setQuestionFormDrawer(false)
-      loadDashboardData(token)
+      loadQuestions() // Just reload questions
     } catch (_error) {
       message.error(editingQuestion ? 'Помилка оновлення питання' : 'Помилка створення питання')
     } finally {
@@ -354,33 +409,33 @@ export const AdminDashboard: React.FC = () => {
       <Card style={{ marginBottom: 24 }}>
         <Row gutter={[16, 16]} justify="space-between" align="middle">
           <Col xs={24} sm={12}>
-            <Title 
-              level={isMobile ? 3 : 2} 
-              style={{ 
+            <Title
+              level={isMobile ? 3 : 2}
+              style={{
                 margin: 0,
-                textAlign: isMobile ? 'center' : 'left'
+                textAlign: isMobile ? 'center' : 'left',
               }}
             >
               Панель адміністратора
             </Title>
           </Col>
           <Col xs={24} sm={12}>
-            <Space 
-              style={{ 
-                width: '100%', 
-                justifyContent: isMobile ? 'center' : 'flex-end' 
+            <Space
+              style={{
+                width: '100%',
+                justifyContent: isMobile ? 'center' : 'flex-end',
               }}
               wrap
             >
-              <Button 
-                icon={<SettingOutlined />} 
+              <Button
+                icon={<SettingOutlined />}
                 onClick={() => setChangePasswordModal(true)}
                 size={isMobile ? 'small' : 'middle'}
               >
                 {isMobile ? 'Пароль' : 'Змінити пароль'}
               </Button>
-              <Button 
-                icon={<LogoutOutlined />} 
+              <Button
+                icon={<LogoutOutlined />}
                 onClick={handleLogout}
                 size={isMobile ? 'small' : 'middle'}
               >
@@ -539,6 +594,13 @@ export const AdminDashboard: React.FC = () => {
                 >
                   Імпорт питань
                 </Button>
+                <Button
+                  type="default"
+                  icon={<DownloadOutlined />}
+                  onClick={handleExportQuestions}
+                >
+                  Експорт питань
+                </Button>
               </Space>
             }
           >
@@ -548,12 +610,21 @@ export const AdminDashboard: React.FC = () => {
               rowKey="_id"
               scroll={{ x: 800 }}
               pagination={{
+                current: questionsPage,
                 pageSize,
+                total: questionsTotal,
                 showSizeChanger: true,
                 showQuickJumper: true,
                 showTotal: (total) => `Всього ${total} питань`,
-                onShowSizeChange: (current, size) => {
+                onChange: (page, size) => {
+                  setQuestionsPage(page)
+                  if (size !== pageSize) {
+                    setPageSize(size!)
+                  }
+                },
+                onShowSizeChange: (_current, size) => {
                   setPageSize(size)
+                  setQuestionsPage(1) // Reset to first page when changing page size
                 },
               }}
               expandable={{
