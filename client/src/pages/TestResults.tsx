@@ -50,9 +50,10 @@ export const TestResults: React.FC = () => {
       title: 'Блок',
       dataIndex: 'block',
       key: 'block',
-      render: (block: number) => isMobile 
-        ? `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES].substring(0, 15)}...`
-        : `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES]}`,
+      render: (block: number) =>
+        isMobile
+          ? `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES].substring(0, 15)}...`
+          : `${block}. ${BLOCK_NAMES[block as keyof typeof BLOCK_NAMES]}`,
       width: isMobile ? 120 : undefined,
     },
     {
@@ -121,10 +122,10 @@ export const TestResults: React.FC = () => {
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           {/* Block Results Table */}
           <Card title="Результати по блоках" size="small">
-            <Table 
-              columns={blockColumns} 
-              dataSource={blockData} 
-              pagination={false} 
+            <Table
+              columns={blockColumns}
+              dataSource={blockData}
+              pagination={false}
               size="small"
               scroll={{ x: isMobile ? 300 : undefined }}
             />
@@ -148,7 +149,13 @@ export const TestResults: React.FC = () => {
                 <Text strong style={{ fontSize: isMobile ? '14px' : '16px' }}>
                   Загальна кількість правильних відповідей
                 </Text>
-                <Text style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 'bold', color: '#1890ff' }}>
+                <Text
+                  style={{
+                    fontSize: isMobile ? '16px' : '18px',
+                    fontWeight: 'bold',
+                    color: '#1890ff',
+                  }}
+                >
                   {totalCorrect} з 60
                 </Text>
               </div>
@@ -169,7 +176,13 @@ export const TestResults: React.FC = () => {
                   Загальний відсоток правильних відповідей
                 </Text>
                 <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
-                  <Text style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: '#1890ff' }}>
+                  <Text
+                    style={{
+                      fontSize: isMobile ? '20px' : '24px',
+                      fontWeight: 'bold',
+                      color: '#1890ff',
+                    }}
+                  >
                     {Math.round(typedResult.total_score)}%
                   </Text>
                   <Progress
@@ -198,7 +211,11 @@ export const TestResults: React.FC = () => {
                 </Text>
                 <Tag
                   color={getKnowledgeLevelColor(typedResult.knowledge_level as KnowledgeLevel)}
-                  style={{ fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '6px 12px' : '8px 16px', fontWeight: 'bold' }}
+                  style={{
+                    fontSize: isMobile ? '14px' : '16px',
+                    padding: isMobile ? '6px 12px' : '8px 16px',
+                    fontWeight: 'bold',
+                  }}
                 >
                   {typedResult.knowledge_level}
                 </Tag>
