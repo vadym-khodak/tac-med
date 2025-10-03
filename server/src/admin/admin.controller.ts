@@ -108,6 +108,17 @@ export class AdminController {
     return this.questionsService.findAll(pageNum, pageSizeNum)
   }
 
+  @Get('questions/export')
+  async exportAllQuestions(@Headers('authorization') authorization: string) {
+    const token = this.extractToken(authorization)
+
+    if (!this.adminService.validateAdminToken(token)) {
+      throw new UnauthorizedException('Invalid or expired admin token')
+    }
+
+    return this.questionsService.exportAll()
+  }
+
   private extractToken(authorization: string): string {
     if (!authorization || !authorization.startsWith('Bearer ')) {
       throw new UnauthorizedException('Authorization header is required')
